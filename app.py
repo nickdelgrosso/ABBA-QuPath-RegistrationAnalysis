@@ -5,7 +5,9 @@ from PyQt5.QtWidgets import QApplication
 
 from bg_atlasapi import BrainGlobeAtlas
 
-from ui import MainWindow, PlotterWindow, BrainRegionTree
+from plot_3d import PlotterWindow
+from main_window import MainWindow
+from region_tree import BrainRegionTree
 
 
 def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
