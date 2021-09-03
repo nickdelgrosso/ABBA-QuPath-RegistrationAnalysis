@@ -5,13 +5,16 @@ from typing import List, Union
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from PyQt5.QtCore import QItemSelectionModel
+from PyQt5.QtWidgets import QTreeWidget, QTreeWidgetItem, QAbstractItemView
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QMainWindow, QWidget, QSplitter, QApplication, QTreeView
 from qtpy.QtGui import QStandardItemModel, QStandardItem
+from qtpy import QtGui
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vedo import Points, Mesh, Plotter
 from bg_atlasapi import BrainGlobeAtlas
-
+from treelib import Node, Tree
 
 
 class HasWidget(ABC):
@@ -59,16 +62,27 @@ class PlotterWindow(HasWidget):
 
 class BrainRegionTree(HasWidget):
 
-    def __init__(self):
-        treeview = QTreeView()
-        HasWidget.__init__(self, widget=treeview)
-        treeview.setExpandsOnDoubleClick(False)
+    def __init__(self, atlas: BrainGlobeAtlas):
+        treeview = QTreeWidget()
         treeview.setHeaderHidden(True)
-        # treeView.setStyleSheet(update_css(tree_css, self.palette))
         treeview.setWordWrap(False)
+        treeview.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        treeview.setSelectionBehavior(QAbstractItemView.SelectRows)
+        HasWidget.__init__(self, widget=treeview)
 
-        treeModel = QStandardItemModel()
-        rootNode = treeModel.invisibleRootItem()
-        item = QStandardItem()
-        item.setText("Item")
-        rootNode.appendRow(item)
+        # Add element's hierarchy
+        tree = Tree((t := atlas.hierarchy).subtree(t.root), deep=True)
+        for id in tree.expand_tree(mode=Tree.DEPTH):
+            node = tree.get_node(id)
+
+            node.item = QTreeWidgetItem()
+            node.item.setText(0, atlas._get_from_structure(node.identifier, "name"))
+
+            if (parent := tree.parent(node.identifier)) is not None:
+                if parent == tree.get_node(tree.root):
+                    treeview.addTopLevelItem(node.item)
+                else:
+                    parent.item.addChild(node.item)
+
+        # Finish up
+        treeview.expandToDepth(2)

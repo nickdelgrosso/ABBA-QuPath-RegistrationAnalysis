@@ -30,11 +30,13 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow(
         main_widgets=[
-            BrainRegionTree(),
+            BrainRegionTree(
+                atlas=(atlas := BrainGlobeAtlas("allen_mouse_25um")),
+            ),
             PlotterWindow(
                 cells=read_detection_file(
                     filename='D:/QuPath Projects/Project3/export2/PW166-A14_Scan1_[4314,45057]_component_data_merged_Region 2.ome.tif__detections2.tsv',
-                    atlas=(atlas := BrainGlobeAtlas("allen_mouse_25um")),
+                    atlas=atlas,
                 ),
                 atlas=atlas,
             ),
