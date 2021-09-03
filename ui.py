@@ -78,8 +78,8 @@ class BrainRegionTree(HasWidget):
             node.item = QTreeWidgetItem()
             node.item.setText(0, atlas._get_from_structure(node.identifier, "name"))
 
-            if (parent := tree.parent(node.identifier)) is not None:
-                if parent == tree.get_node(tree.root):
+            if not node.is_root():
+                if (parent := tree.parent(node.identifier)).is_root():
                     treeview.addTopLevelItem(node.item)
                 else:
                     parent.item.addChild(node.item)
