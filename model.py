@@ -1,13 +1,14 @@
-from dataclasses import dataclass, field
-from typing import Tuple
-
 from bg_atlasapi import BrainGlobeAtlas
+from traitlets import HasTraits, Instance, observe, Tuple, Int
 
 
-@dataclass
-class AppState:
-    atlas: BrainGlobeAtlas
-    selected_region_ids: Tuple[int] = field(default_factory=list)
+class AppState(HasTraits):
+    atlas = Instance(BrainGlobeAtlas)
+    selected_region_ids = Tuple(default_value=())
+
+    @observe('selected_region_ids')
+    def _on_change_selected_region_ids(self, change):
+        print(f"Selected: {change['new']}")
 
 
 model = AppState(

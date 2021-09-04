@@ -38,7 +38,5 @@ class BrainRegionTree(HasWidget):
         self.treeview = treeview
 
     def onSelectionChanged(self):
-        for item in self.treeview.selectedItems():
-            print(f'selected: {item.text(1)} ({item.text(0)})')
         self._model.selected_region_ids = tuple(int(item.text(1)) for item in self.treeview.selectedItems())
 
