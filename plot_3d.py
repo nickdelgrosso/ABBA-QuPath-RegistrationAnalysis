@@ -1,6 +1,4 @@
 import numpy as np
-import pandas as pd
-from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
 from vedo import Plotter, Points, Mesh
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
@@ -12,19 +10,44 @@ from utils import HasWidget
 class PlotterWindow(HasWidget):
 
     def __init__(self, model: AppState):
+        self.model = model
         widget = QVTKRenderWindowInteractor()
         HasWidget.__init__(self, widget=widget)
-        Plotter(qtWidget=widget).show(
-            Points(
-                model.cells[['X', 'Y', 'Z']].values * 1000,
-                r=3,
-                c=plt.cm.tab20c((name_ids := model.cells.name.cat.codes) / np.max(name_ids))[:, :3]
-            ),
-            Mesh(
-                str(model.atlas.structures[997]['mesh_filename']),
-                alpha=0.1,
-                computeNormals=True,
-                c=(1., 1., 1.)
-            ),
-            at=0,
-        )
+
+
+        max_name_ids = model.cells.name.cat.codes.max()
+        name_ids = model.cells.name.cat.codes
+        all_colors = (plt.cm.tab20c(name_ids / max_name_ids)[:, :4] * 255).astype(int)
+        self.item_points = {}
+        for id in self.model.atlas.hierarchy.expand_tree():
+            in_region = model.cells.BGIdx == id
+            if in_region.sum() != 0:
+                colors = all_colors[in_region, :]
+                cells = model.cells[in_region]
+                self.item_points[id] = Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
+
+
+        self.plotter = Plotter(qtWidget=widget)
+        mesh = Mesh(str(model.atlas.structures[997]['mesh_filename']), alpha=0.1, computeNormals=True, c=(1., 1., 1.))
+        self.plotter.show(list(self.item_points.values()) + [mesh], at=0)
+
+        self.model.observe(self.on_change_selected_regions, names=['selected_region_ids'])
+
+    def on_change_selected_regions(self, change):
+        print('noticed that regions changed!')
+        selected_ids = change['new']
+        if not selected_ids:
+            for points in self.item_points.values():
+                points.alpha(1.)
+        if selected_ids:
+            for id, points in self.item_points.items():
+                points.alpha(1. if id in selected_ids else 0.05)
+
+        # Fake a button press to force canvas update
+        self.plotter.interactor.MiddleButtonPressEvent()
+        self.plotter.interactor.MiddleButtonReleaseEvent()
+
+        # cell_selected = self.model.cells.BGIdx.isin(change['new']).values
+
+        # print(self.points._data)
+        # self.points.c(alpha=cell_selected.astype(int))
