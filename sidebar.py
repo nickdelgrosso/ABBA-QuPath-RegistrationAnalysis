@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QFileDialog
 from bg_atlasapi import BrainGlobeAtlas
 
 from model import AppState, read_detection_file
@@ -10,25 +10,27 @@ class Sidebar(HasWidget):
     def __init__(self, model: AppState):
         self.model = model
 
-        widget = QWidget()
-        HasWidget.__init__(self, widget=widget)
+        self._widget = QWidget()
+        HasWidget.__init__(self, widget=self._widget)
 
         layout = QVBoxLayout()
-        widget.setLayout(layout)
+        self._widget.setLayout(layout)
 
-        button = QPushButton('Load TSVs')
+        button = QPushButton('Load Cells')
         layout.addWidget(button)
         button.clicked.connect(self.load_data)
 
     def load_data(self):
-        print('loading data')
-        df = read_detection_file(
-            filename='D:/QuPath Projects/Project3/export2/PW166-A14_Scan1_[4314,45057]_component_data_merged_Region 2.ome.tif__detections2.tsv',
-            atlas=self.model.atlas, )
-        print('data loaded')
-        print('assigning data')
+        filename, filetype = QFileDialog.getOpenFileName(
+            parent=self._widget,
+            caption="Load Cell Points from File",
+            # dir="D:/QuPath Projects/Project3/export2",
+            filter="TSV Files (*.tsv)"
+        )
+        if not filename:
+            return
+        df = read_detection_file(filename=filename, atlas=self.model.atlas)
         self.model.cells = df
-        print('data assigned')
 
 
 
