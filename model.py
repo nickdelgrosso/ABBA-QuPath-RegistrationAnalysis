@@ -23,7 +23,7 @@ def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
 
 class AppState(HasTraits):
     atlas = Instance(BrainGlobeAtlas)
-    cells = Instance(klass=pd.DataFrame)
+    cells = Instance(klass=pd.DataFrame, allow_none=True)
 
     selected_region_ids = Tuple(default_value=())  # should be tuple of ints
     @observe('selected_region_ids')
@@ -33,8 +33,4 @@ class AppState(HasTraits):
 
 model = AppState(
     atlas=BrainGlobeAtlas("allen_mouse_25um"),
-    cells=read_detection_file(
-        filename='D:/QuPath Projects/Project3/export2/PW166-A14_Scan1_[4314,45057]_component_data_merged_Region 2.ome.tif__detections2.tsv',
-        atlas=BrainGlobeAtlas("allen_mouse_25um"),
-    ),
 )
