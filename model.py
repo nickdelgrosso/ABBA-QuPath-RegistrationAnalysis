@@ -4,7 +4,7 @@ from traitlets import HasTraits, Instance, observe, Tuple, Int
 
 class AppState(HasTraits):
     atlas = Instance(BrainGlobeAtlas)
-    selected_region_ids = Tuple(default_value=())
+    selected_region_ids = Tuple(default_value=())  # should be tuple of ints
 
     @observe('selected_region_ids')
     def _on_change_selected_region_ids(self, change):
