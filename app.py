@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 
 from bg_atlasapi import BrainGlobeAtlas
 
+from model import model
 from plot_3d import PlotterWindow
 from main_window import MainWindow
 from region_tree import BrainRegionTree
@@ -32,13 +33,11 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow(
         main_widgets=[
-            BrainRegionTree(
-                atlas=(atlas := BrainGlobeAtlas("allen_mouse_25um")),
-            ),
+            BrainRegionTree(model=model),
             PlotterWindow(
                 cells=read_detection_file(
                     filename='D:/QuPath Projects/Project3/export2/PW166-A14_Scan1_[4314,45057]_component_data_merged_Region 2.ome.tif__detections2.tsv',
-                    atlas=atlas,
+                    atlas=(atlas := BrainGlobeAtlas("allen_mouse_25um")),
                 ),
                 atlas=atlas,
             ),
