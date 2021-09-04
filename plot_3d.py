@@ -14,7 +14,6 @@ class PlotterWindow(HasWidget):
         widget = QVTKRenderWindowInteractor()
         HasWidget.__init__(self, widget=widget)
 
-
         max_name_ids = model.cells.name.cat.codes.max()
         name_ids = model.cells.name.cat.codes
         all_colors = (plt.cm.tab20c(name_ids / max_name_ids)[:, :4] * 255).astype(int)
@@ -24,7 +23,9 @@ class PlotterWindow(HasWidget):
             if in_region.sum() != 0:
                 colors = all_colors[in_region, :]
                 cells = model.cells[in_region]
-                self.item_points[id] = Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
+                points = Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
+                self.item_points[id] = points
+
 
 
         self.plotter = Plotter(qtWidget=widget)
@@ -34,20 +35,20 @@ class PlotterWindow(HasWidget):
         self.model.observe(self.on_change_selected_regions, names=['selected_region_ids'])
 
     def on_change_selected_regions(self, change):
-        print('noticed that regions changed!')
-        selected_ids = change['new']
-        if not selected_ids:
+        if (selected_ids := change['new']):
+            for id, points in self.item_points.items():
+                # points.alpha(1. if id in selected_ids else 0.05)
+                if any(self.model.atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids):
+                    points.alpha(1.)
+                else:
+                    points.alpha(0.05)
+
+        else:
             for points in self.item_points.values():
                 points.alpha(1.)
-        if selected_ids:
-            for id, points in self.item_points.items():
-                points.alpha(1. if id in selected_ids else 0.05)
+
 
         # Fake a button press to force canvas update
         self.plotter.interactor.MiddleButtonPressEvent()
         self.plotter.interactor.MiddleButtonReleaseEvent()
 
-        # cell_selected = self.model.cells.BGIdx.isin(change['new']).values
-
-        # print(self.points._data)
-        # self.points.c(alpha=cell_selected.astype(int))
