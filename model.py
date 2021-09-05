@@ -29,8 +29,3 @@ class AppState(HasTraits):
     @observe('selected_region_ids')
     def _on_change_selected_region_ids(self, change):
         print(f"Selected: {change['new']}")
-
-
-model = AppState(
-    atlas=BrainGlobeAtlas("allen_mouse_25um"),
-)

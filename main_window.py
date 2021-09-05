@@ -1,7 +1,7 @@
 from typing import List, Union
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QWidget, QSplitter, QMenu, QAction
+from PyQt5.QtWidgets import QMainWindow, QWidget, QSplitter, QMenu, QAction, QToolBar
 
 from utils import HasWidget
 
@@ -17,10 +17,9 @@ class MainWindow(QMainWindow):
         for widget in self._widgets:
             self._splitter.addWidget(widget.widget if hasattr(widget, 'widget') else widget)
 
-        menu_bar = self.menuBar()
-        file_menu = QMenu("&File", self)
-        menu_bar.addMenu(file_menu)
+        tool_bar = QToolBar()
         for action in menu_actions:
-            file_menu.addAction(action)
+            tool_bar.addAction(action)
+        self.addToolBar(Qt.TopToolBarArea, tool_bar)
 
 
