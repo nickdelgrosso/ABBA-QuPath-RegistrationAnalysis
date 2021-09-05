@@ -18,7 +18,7 @@ def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
             .merge(atlas.lookup_df, right_on="id", left_on="BGIdx", how="left")
             .astype({'acronym': 'category', 'name': 'category'})
             .drop(columns=['id'])
-    ).sample(10000)
+    )#.sample(10000)
 
 
 class AppState(HasTraits):
