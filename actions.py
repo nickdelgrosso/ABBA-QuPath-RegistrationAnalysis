@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from PyQt5.QtWidgets import QAction, QFileDialog
+from bg_atlasapi import BrainGlobeAtlas
 
 from model import AppState, read_detection_file
 
@@ -28,3 +29,15 @@ class LoadCellsAction(QAction):
 
         df = read_detection_file(filename=filename, atlas=self.model.atlas)
         self.model.cells = df
+
+
+class LoadAtlasAction(QAction):
+
+    def __init__(self, model: AppState, *args, **kwargs):
+        self.model = model
+        super().__init__(*args, **kwargs)
+        self.setText("&Load Brainglobe Atlas")
+        self.triggered.connect(self.run)
+
+    def run(self):
+        self.model.atlas = BrainGlobeAtlas("allen_mouse_25um")

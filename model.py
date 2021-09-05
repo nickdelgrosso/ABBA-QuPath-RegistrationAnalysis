@@ -22,10 +22,10 @@ def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
 
 
 class AppState(HasTraits):
-    atlas = Instance(BrainGlobeAtlas)
+    atlas = Instance(BrainGlobeAtlas, allow_none=True)
     cells = Instance(klass=pd.DataFrame, allow_none=True)
-
     selected_region_ids = Tuple(default_value=())  # should be tuple of ints
+
     @observe('selected_region_ids')
     def _on_change_selected_region_ids(self, change):
         print(f"Selected: {change['new']}")

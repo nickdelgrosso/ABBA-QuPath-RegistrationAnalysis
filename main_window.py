@@ -17,6 +17,7 @@ class MainWindow(QMainWindow):
         for widget in self._widgets:
             self._splitter.addWidget(widget.widget if hasattr(widget, 'widget') else widget)
 
+        self._actions = menu_actions
         tool_bar = QToolBar()
         for action in menu_actions:
             tool_bar.addAction(action)

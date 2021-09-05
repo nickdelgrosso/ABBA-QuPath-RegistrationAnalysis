@@ -42,7 +42,6 @@ class PlotterWindow(HasWidget):
 
     def __init__(self, model: AppState):
         self.model = model
-        self.mesh = Mesh(str(model.atlas.structures[997]['mesh_filename']), alpha=0.1, computeNormals=True, c=(1., 1., 1.))
         self.item_points = {}
 
         widget = QVTKRenderWindowInteractor()
@@ -71,8 +70,23 @@ class PlotterWindow(HasWidget):
         self.render()
 
     def render(self):
-        visible_points = [point for point in self.item_points.values() if point.alpha() > 0]  # vedo is slow with non-1 alphas.
-        self.plotter.show(visible_points + [self.mesh], at=0)
+        actors = []
+
+        # Pointcloud
+        actors.extend([point for point in self.item_points.values() if point.alpha() > 0])  # vedo is slow with non-1 alphas.
+
+        # Brain Mesh
+        if self.model.atlas is not None:
+            mesh = Mesh(
+                str(self.model.atlas.structures[997]['mesh_filename']),
+                alpha=0.1,
+                computeNormals=True,
+                c=(1., 1., 1.)
+            )
+            actors.append(mesh)
+
+        # Render
+        self.plotter.show(actors, at=0)
 
     def on_change_selected_regions(self, change):
         if (selected_ids := change['new']):
