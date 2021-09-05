@@ -58,14 +58,18 @@ class PlotterWindow(HasWidget):
             self.worker = PointPlotterWorker(model=self.model)
             self.worker.moveToThread(self.thread)
             self.thread.started.connect(self.worker.run)
-            self.worker.finished.connect(self.render_points)
+            self.worker.finished.connect(self.update_item_points)
             self.worker.finished.connect(self.worker.deleteLater)
             self.thread.finished.connect(self.thread.deleteLater)
             self.thread.start()
 
-    def render_points(self, points: Dict[int, Points]):
-        self.item_points = points
-        self.plotter.show(list(points.values()) + [self.mesh], at=0)
+    def update_item_points(self, item_points: Dict[int, Points]):
+        self.item_points = item_points
+        self.render()
+
+    def render(self):
+        visible_points = [point for point in self.item_points.values() if point.alpha() > 0]  # vedo is slow with non-1 alphas.
+        self.plotter.show(visible_points + [self.mesh], at=0)
 
     def on_change_selected_regions(self, change):
         if (selected_ids := change['new']):
@@ -78,8 +82,5 @@ class PlotterWindow(HasWidget):
             for points in self.item_points.values():
                 points.alpha(1.)
 
-
-        # Fake a button press to force canvas update
-        self.plotter.interactor.MiddleButtonPressEvent()
-        self.plotter.interactor.MiddleButtonReleaseEvent()
+        self.render()
 
