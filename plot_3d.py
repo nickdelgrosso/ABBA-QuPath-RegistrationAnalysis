@@ -1,5 +1,5 @@
 import time
-from typing import Dict
+from typing import Dict, List
 
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from matplotlib import pyplot as plt
@@ -11,30 +11,52 @@ from utils import HasWidget
 
 
 class PointPlotterWorker(QObject):
-    finished = pyqtSignal(dict)
+    finished = pyqtSignal(list)
 
-    def __init__(self, model: AppState):
+    def __init__(self, model: AppState, plotter: Plotter):
         super().__init__()
         self.model = model
+        self.plotter = plotter
 
     def run(self):
         print('starting run')
         start_time = time.monotonic()
-        max_name_ids = self.model.cells.name.cat.codes.max()
-        name_ids = self.model.cells.name.cat.codes
-        all_colors = (plt.cm.tab20c(name_ids / max_name_ids)[:, :4] * 255).astype(int)
-        item_points = {}
 
-        for id in self.model.atlas.hierarchy.expand_tree():
-            in_region = self.model.cells.BGIdx == id
-            if in_region.sum() != 0:
-                colors = all_colors[in_region, :]
-                cells = self.model.cells[in_region]
-                points = Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
-                item_points[id] = points
+        actors = []
 
-        print(f"Total Time: {time.monotonic() - start_time} for {len(self.model.cells)}")
-        self.finished.emit(item_points)  # Dict[int, Points]
+        # Pointcloud
+        if self.model.cells is not None:
+            max_name_ids = self.model.cells.name.cat.codes.max()
+            name_ids = self.model.cells.name.cat.codes
+
+            colors = (plt.cm.tab20c(name_ids / max_name_ids)[:, :4] * 255).astype(int)
+
+            cells = self.model.cells
+            if (selected_ids := self.model.selected_region_ids):
+                is_selected = self.model.cells.BGIdx.apply(
+                    lambda id: any(
+                        self.model.atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids if
+                        id != 0)
+                )
+                cells = self.model.cells[is_selected]
+                colors = colors[is_selected]
+
+            if len(cells) > 0:
+                point_cloud = Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
+                actors.append(point_cloud)
+
+        # Brain Mesh
+        if self.model.atlas is not None:
+            mesh = Mesh(
+                str(self.model.atlas.structures[997]['mesh_filename']),
+                alpha=0.1,
+                computeNormals=True,
+                c=(1., 1., 1.)
+            )
+            actors.append(mesh)
+
+        # Render
+        self.finished.emit(actors)
 
 
 
@@ -48,56 +70,18 @@ class PlotterWindow(HasWidget):
         HasWidget.__init__(self, widget=widget)
         self.plotter = Plotter(qtWidget=widget)
 
-        self.render()
+        self.model.observe(self.update_plot, names=['selected_region_ids', 'cells', 'mesh'])
 
-        self.model.observe(self.on_change_selected_regions, names=['selected_region_ids'])
-        self.model.observe(self.on_change_cells, names=['cells'])
+    def update_plot(self, change):
+        # from https://realpython.com/python-pyqt-qthread/#using-qthread-to-prevent-freezing-guis
+        self.thread = QThread()
+        self.worker = PointPlotterWorker(model=self.model, plotter=self.plotter)
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.render)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.thread.start()
 
-    def on_change_cells(self, change):
-        if self.model.cells is not None:
-            # from https://realpython.com/python-pyqt-qthread/#using-qthread-to-prevent-freezing-guis
-            self.thread = QThread()
-            self.worker = PointPlotterWorker(model=self.model)
-            self.worker.moveToThread(self.thread)
-            self.thread.started.connect(self.worker.run)
-            self.worker.finished.connect(self.update_item_points)
-            self.worker.finished.connect(self.worker.deleteLater)
-            self.thread.finished.connect(self.thread.deleteLater)
-            self.thread.start()
-
-    def update_item_points(self, item_points: Dict[int, Points]):
-        self.item_points = item_points
-        self.render()
-
-    def render(self):
-        actors = []
-
-        # Pointcloud
-        actors.extend([point for point in self.item_points.values() if point.alpha() > 0])  # vedo is slow with non-1 alphas.
-
-        # Brain Mesh
-        if self.model.atlas is not None:
-            mesh = Mesh(
-                str(self.model.atlas.structures[997]['mesh_filename']),
-                alpha=0.1,
-                computeNormals=True,
-                c=(1., 1., 1.)
-            )
-            actors.append(mesh)
-
-        # Render
+    def render(self, actors: List):
         self.plotter.show(actors, at=0)
-
-    def on_change_selected_regions(self, change):
-        if (selected_ids := change['new']):
-            for id, points in self.item_points.items():
-                if any(self.model.atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids):
-                    points.alpha(1.)
-                else:
-                    points.alpha(0)
-        else:
-            for points in self.item_points.values():
-                points.alpha(1.)
-
-        self.render()
-
