@@ -42,16 +42,19 @@ class PlotterWindow(HasWidget):
 
     def __init__(self, model: AppState):
         self.model = model
+        self.mesh = Mesh(str(model.atlas.structures[997]['mesh_filename']), alpha=0.1, computeNormals=True, c=(1., 1., 1.))
+        self.item_points = {}
+
         widget = QVTKRenderWindowInteractor()
         HasWidget.__init__(self, widget=widget)
         self.plotter = Plotter(qtWidget=widget)
-        self.mesh = Mesh(str(model.atlas.structures[997]['mesh_filename']), alpha=0.1, computeNormals=True, c=(1., 1., 1.))
-        self.plotter.show(self.mesh, at=0)
+
+        self.render()
 
         self.model.observe(self.on_change_selected_regions, names=['selected_region_ids'])
-        self.model.observe(self.plot_cells, names=['cells'])
+        self.model.observe(self.on_change_cells, names=['cells'])
 
-    def plot_cells(self, change):
+    def on_change_cells(self, change):
         if self.model.cells is not None:
             # from https://realpython.com/python-pyqt-qthread/#using-qthread-to-prevent-freezing-guis
             self.thread = QThread()
