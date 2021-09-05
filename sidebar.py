@@ -18,29 +18,6 @@ class Sidebar(HasWidget):
         layout = QVBoxLayout()
         self._widget.setLayout(layout)
 
-        button = QPushButton('Load Cells')
-        layout.addWidget(button)
-        button.clicked.connect(self.on_click_load_cells_button)
-
-    def on_click_load_cells_button(self):
-        filenames, filetype = QFileDialog.getOpenFileNames(
-            parent=self._widget,
-            caption="Load Cell Points from File",
-            # dir="D:/QuPath Projects/Project3/export2",
-            filter="TSV Files (*.tsv)"
-        )
-        self.load_cells_data(filenames=[Path(f) for f in filenames])
-
-    def load_cells_data(self, filenames: List[Path]):
-        if not filenames:
-            return
-        filename, *other_filenames = filenames
-        if other_filenames:
-            raise NotImplementedError("Multiple Filenames not yet implemented")
-
-        df = read_detection_file(filename=filename, atlas=self.model.atlas)
-        self.model.cells = df
-
 
 
 

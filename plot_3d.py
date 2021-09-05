@@ -1,7 +1,6 @@
 import time
-from typing import List, Dict
+from typing import Dict
 
-import numpy as np
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from matplotlib import pyplot as plt
 from vedo import Plotter, Points, Mesh
@@ -9,6 +8,7 @@ from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from model import AppState
 from utils import HasWidget
+
 
 class PointPlotterWorker(QObject):
     finished = pyqtSignal(dict)
