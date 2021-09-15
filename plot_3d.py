@@ -2,6 +2,7 @@ import time
 from typing import Dict, List
 
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
+from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
 from traitlets import HasTraits, Instance, link, directional_link
 from vedo import Plotter, Points, Mesh
@@ -57,13 +58,18 @@ class PlotterModel(HasTraits):
         directional_link(
             source=(model, 'atlas'),
             target=(self, 'atlas_mesh'),
-            transform=lambda atlas: Mesh(
-                str(atlas.structures[997]['mesh_filename']),
-                alpha=0.1,
-                computeNormals=True,
-                c=(1., 1., 1.)
-            ) if atlas is not None else None,
+            transform=lambda atlas: self.plot_atlas_mesh(atlas) if atlas is not None else None,
         )
+
+    @staticmethod
+    def plot_atlas_mesh(atlas: BrainGlobeAtlas) -> Mesh:
+        return Mesh(
+            str(atlas.structures[997]['mesh_filename']),
+            alpha=0.1,
+            computeNormals=True,
+            c=(1., 1., 1.)
+        )
+
 
 
 
