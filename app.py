@@ -21,7 +21,7 @@ if __name__ == '__main__':
     win = MainWindow(
         main_widgets=[
             BrainRegionTree(model=model),
-            PlotterWindow(model=model, vmodel=plotter_model),
+            PlotterWindow(vmodel=plotter_model),
             Sidebar(model=model),
         ],
         menu_actions=[
