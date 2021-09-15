@@ -63,10 +63,11 @@ class PlotterModel(HasTraits):
         )
 
     def link_meshes_on_thread_worker(self, change):
-        worker = Worker(self.plot_atlas_mesh, self.model.atlas)
-        worker.moveToThread(self.thread)
-        worker.finished.connect(partial(setattr, self, "atlas_mesh"))
-        worker.start.emit()
+        if self.model.atlas is not None:
+            worker = Worker(self.plot_atlas_mesh, self.model.atlas)
+            worker.moveToThread(self.thread)
+            worker.finished.connect(partial(setattr, self, "atlas_mesh"))
+            worker.start.emit()
 
     def link_cells_to_points(self, change):
         model = self.model

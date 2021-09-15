@@ -2,7 +2,8 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from actions import LoadCellsAction, LoadAtlasAction
+from actions.load_cells import LoadCellsAction
+from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from main_window import MainWindow
 from model import AppState
 from plot_3d import PlotterView, PlotterModel
@@ -18,6 +19,9 @@ if __name__ == '__main__':
     plotter_model = PlotterModel()
     plotter_model.observe_model(model=model)
 
+    load_atlas_action_model = LoadAtlasActionModel()
+    load_atlas_action_model.register_model(model=model)
+
     win = MainWindow(
         main_widgets=[
             BrainRegionTree(model=model),
@@ -26,7 +30,7 @@ if __name__ == '__main__':
         ],
         menu_actions=[
             LoadCellsAction(model=model),
-            LoadAtlasAction(model=model),
+            LoadAtlasAction(model=load_atlas_action_model),
         ]
     )
     win.show()

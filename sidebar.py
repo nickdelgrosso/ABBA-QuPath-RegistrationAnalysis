@@ -1,9 +1,6 @@
-from pathlib import Path
-from typing import List
+from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QFileDialog
-
-from model import AppState, read_detection_file
+from model import AppState
 from utils import HasWidget
 
 
