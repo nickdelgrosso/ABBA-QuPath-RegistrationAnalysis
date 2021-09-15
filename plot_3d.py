@@ -3,6 +3,7 @@ from typing import Dict, List
 
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from matplotlib import pyplot as plt
+from traitlets import HasTraits, Instance, link, directional_link
 from vedo import Plotter, Points, Mesh
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
@@ -45,25 +46,32 @@ class PointPlotterWorker(QObject):
                 point_cloud = Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
                 actors.append(point_cloud)
 
-        # Brain Mesh
-        if self.model.atlas is not None:
-            mesh = Mesh(
-                str(self.model.atlas.structures[997]['mesh_filename']),
+        # Render
+        self.finished.emit(actors)
+
+
+class PlotterModel(HasTraits):
+    atlas_mesh = Instance(Mesh, allow_none=True)
+
+    def observe_model(self, model: AppState):
+        directional_link(
+            source=(model, 'atlas'),
+            target=(self, 'atlas_mesh'),
+            transform=lambda atlas: Mesh(
+                str(atlas.structures[997]['mesh_filename']),
                 alpha=0.1,
                 computeNormals=True,
                 c=(1., 1., 1.)
-            )
-            actors.append(mesh)
-
-        # Render
-        self.finished.emit(actors)
+            ) if atlas is not None else None,
+        )
 
 
 
 class PlotterWindow(HasWidget):
 
-    def __init__(self, model: AppState):
+    def __init__(self, model: AppState, vmodel: PlotterModel):
         self.model = model
+        self.vmodel = vmodel
         self.item_points = {}
 
         widget = QVTKRenderWindowInteractor()
@@ -84,4 +92,5 @@ class PlotterWindow(HasWidget):
         self.thread.start()
 
     def render(self, actors: List):
-        self.plotter.show(actors, at=0)
+        print(self.vmodel.atlas_mesh)
+        self.plotter.show(actors + [self.vmodel.atlas_mesh], at=0)
