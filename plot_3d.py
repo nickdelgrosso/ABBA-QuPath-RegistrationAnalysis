@@ -108,14 +108,14 @@ class PlotterModel(HasTraits):
 class PlotterView(HasWidget):
 
     def __init__(self, model: PlotterModel):
-        self.vmodel = model
+        self.model = model
         self.item_points = {}
 
         widget = QVTKRenderWindowInteractor()
         HasWidget.__init__(self, widget=widget)
         self.plotter = Plotter(qtWidget=widget)
 
-        self.vmodel.observe(self.render, names=['atlas_mesh', 'cell_points'])
+        self.model.observe(self.render, names=['atlas_mesh', 'cell_points'])
 
     def render(self, change):
-        self.plotter.show([self.vmodel.cell_points, self.vmodel.atlas_mesh], at=0)
+        self.plotter.show([self.model.cell_points, self.model.atlas_mesh], at=0)
