@@ -70,12 +70,14 @@ class PlotterModel(HasTraits):
 
     def link_cells_to_points(self, change):
         model = self.model
-        points = self.plot_cells(
+        worker = Worker(
+            self.plot_cells,
             cells=model.cells,
             selected_region_ids=model.selected_region_ids,
             atlas=model.atlas,
         )
-        self.cell_points = points
+        worker.finished.connect(partial(setattr, self, "cell_points"))
+        worker.start.emit()
 
     @staticmethod
     def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> Optional[Points]:
