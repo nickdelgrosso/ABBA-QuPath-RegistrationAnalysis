@@ -1,7 +1,8 @@
 import time
 from functools import partial
-from typing import Dict, List, Callable, Any
+from typing import Dict, List, Callable, Any, Optional, Tuple
 
+import pandas as pd
 from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
@@ -68,27 +69,35 @@ class PlotterModel(HasTraits):
         worker.start.emit()
 
     def link_cells_to_points(self, change):
-        self.plot_cells(change=change)
+        model = self.model
+        points = self.plot_cells(
+            cells=model.cells,
+            selected_region_ids=model.selected_region_ids,
+            atlas=model.atlas,
+        )
+        self.cell_points = points
 
-    def plot_cells(self, change):
-        if self.model.cells is not None:
-            max_name_ids = self.model.cells.name.cat.codes.max()
-            name_ids = self.model.cells.name.cat.codes
+    @staticmethod
+    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> Optional[Points]:
+        if cells is not None:
+            max_name_ids = cells.name.cat.codes.max()
+            name_ids = cells.name.cat.codes
 
             colors = (plt.cm.tab20c(name_ids / max_name_ids)[:, :4] * 255).astype(int)
 
-            cells = self.model.cells
-            if (selected_ids := self.model.selected_region_ids):
-                is_selected = self.model.cells.BGIdx.apply(
+            if selected_ids := selected_region_ids:
+                is_selected = cells.BGIdx.apply(
                     lambda id: any(
-                        self.model.atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids if
+                        atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids if
                         id != 0)
                 )
-                cells = self.model.cells[is_selected]
+                cells = cells[is_selected]
                 colors = colors[is_selected]
 
             if len(cells) > 0:
-                self.cell_points = Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
+                return Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
+            else:
+                return None
 
 
 
