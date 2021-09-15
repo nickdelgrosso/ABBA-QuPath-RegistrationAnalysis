@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QTreeWidget, QAbstractItemView, QTreeWidgetItem
 from treelib import Tree
 
 from model import AppState
-from utils import HasWidget
+from .utils import HasWidget
 
 
 class BrainRegionTree(HasWidget):

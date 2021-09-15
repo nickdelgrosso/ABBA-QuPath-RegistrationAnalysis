@@ -11,7 +11,7 @@ from vedo import Plotter, Points, Mesh
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from model import AppState
-from utils import HasWidget
+from .utils import HasWidget
 
 
 class Worker(QObject):

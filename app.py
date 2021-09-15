@@ -4,11 +4,11 @@ from PyQt5.QtWidgets import QApplication
 
 from actions.load_cells import LoadCellsAction
 from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
-from main_window import MainWindow
+from views.main_window import MainWindow
 from model import AppState
-from plot_3d import PlotterView, PlotterModel
-from region_tree import BrainRegionTree
-from sidebar import Sidebar
+from views.plot_3d import PlotterView, PlotterModel
+from views.region_tree import BrainRegionTree
+from views.sidebar import Sidebar
 
 if __name__ == '__main__':
 

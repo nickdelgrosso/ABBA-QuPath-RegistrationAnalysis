@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 from model import AppState
-from utils import HasWidget
+from .utils import HasWidget
 
 
 class Sidebar(HasWidget):

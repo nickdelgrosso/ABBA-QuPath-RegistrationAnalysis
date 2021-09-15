@@ -3,7 +3,7 @@ from typing import List, Union
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QWidget, QSplitter, QMenu, QAction, QToolBar
 
-from utils import HasWidget
+from .utils import HasWidget
 
 
 class MainWindow(QMainWindow):
