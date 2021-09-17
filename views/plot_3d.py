@@ -1,39 +1,16 @@
-import time
 from functools import partial
-from typing import Dict, List, Callable, Any, Optional, Tuple
+from typing import Optional, Tuple
 
 import pandas as pd
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QThread
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
-from traitlets import HasTraits, Instance, link, directional_link
+from traitlets import HasTraits, Instance
 from vedo import Plotter, Points, Mesh
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from model import AppState
-from .utils import HasWidget
-
-
-class Worker(QObject):
-    start = pyqtSignal()
-    started = pyqtSignal(str)
-    finished = pyqtSignal(object)
-
-    def __init__(self, fun: Callable, *args, **kwargs):
-        super().__init__()
-        self.fun = fun
-        self.args = args
-        self.kwargs = kwargs
-        self.start.connect(self.run)
-
-    # @pyqtSlot
-    def run(self):
-        self.finished.connect(self.deleteLater)
-        print('started working...')
-        self.started.emit("started run")
-        result = self.fun(*self.args, **self.kwargs)
-        print('finished working...')
-        self.finished.emit(result)
+from .utils import HasWidget, Worker
 
 
 class PlotterModel(HasTraits):
@@ -77,6 +54,7 @@ class PlotterModel(HasTraits):
             selected_region_ids=model.selected_region_ids,
             atlas=model.atlas,
         )
+        worker.moveToThread(self.thread)
         worker.finished.connect(partial(setattr, self, "cell_points"))
         worker.start.emit()
 
