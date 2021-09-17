@@ -7,7 +7,7 @@ from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from views.main_window import MainWindow
 from model import AppState
 from views.plot_3d import PlotterView, PlotterModel
-from views.region_tree import BrainRegionTree
+from views.region_tree import BrainRegionTree, BrainRegionTreeViewModel
 from views.sidebar import Sidebar
 
 if __name__ == '__main__':
@@ -19,6 +19,9 @@ if __name__ == '__main__':
     plotter_model = PlotterModel()
     plotter_model.register(model=model)
 
+    brain_region_tree_model = BrainRegionTreeViewModel()
+    brain_region_tree_model.register(model=model)
+
     load_atlas_action_model = LoadAtlasActionModel()
     load_atlas_action_model.register(model=model)
 
@@ -26,9 +29,11 @@ if __name__ == '__main__':
     load_cells_action_model.register(model=model)
 
 
+
+
     win = MainWindow(
         main_widgets=[
-            BrainRegionTree(model=model),
+            BrainRegionTree(model=brain_region_tree_model),
             PlotterView(model=plotter_model),
             Sidebar(model=model),
         ],
