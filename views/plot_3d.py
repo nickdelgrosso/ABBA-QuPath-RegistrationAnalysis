@@ -40,7 +40,7 @@ class PlotterModel(HasTraits):
     atlas_mesh = Instance(Mesh, allow_none=True)
     cell_points = Instance(Points, allow_none=True)
 
-    def observe_model(self, model: AppState):
+    def register(self, model: AppState):
         self.model = model
         self.create_thread()
 

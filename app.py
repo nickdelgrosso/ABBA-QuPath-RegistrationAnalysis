@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from actions.load_cells import LoadCellsAction
+from actions.load_cells import LoadCellsAction, LoadCellsModel
 from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from views.main_window import MainWindow
 from model import AppState
@@ -17,10 +17,14 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     plotter_model = PlotterModel()
-    plotter_model.observe_model(model=model)
+    plotter_model.register(model=model)
 
     load_atlas_action_model = LoadAtlasActionModel()
-    load_atlas_action_model.register_model(model=model)
+    load_atlas_action_model.register(model=model)
+
+    load_cells_action_model = LoadCellsModel()
+    load_cells_action_model.register(model=model)
+
 
     win = MainWindow(
         main_widgets=[
@@ -29,7 +33,7 @@ if __name__ == '__main__':
             Sidebar(model=model),
         ],
         menu_actions=[
-            LoadCellsAction(model=model),
+            LoadCellsAction(model=load_cells_action_model),
             LoadAtlasAction(model=load_atlas_action_model),
         ]
     )

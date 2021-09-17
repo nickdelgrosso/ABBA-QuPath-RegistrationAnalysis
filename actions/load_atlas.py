@@ -9,7 +9,7 @@ class LoadAtlasActionModel(HasTraits):
     text = Unicode("&Load Brainglobe Atlas")
     atlas = Instance(BrainGlobeAtlas, allow_none=True)
 
-    def register_model(self, model: AppState):
+    def register(self, model: AppState):
         directional_link((self, "atlas"), target=(model, "atlas"))
 
     def run(self):
