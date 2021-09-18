@@ -14,8 +14,8 @@ from .utils import HasWidget, Worker
 
 
 class PlotterModel(HasTraits):
-    atlas_mesh = Instance(Mesh, allow_none=True)
-    cell_points = Instance(Points, allow_none=True)
+    atlas_mesh = Instance(Mesh, default_value=Mesh())
+    cell_points = Instance(Points, default_value=Points())
 
     def register(self, model: AppState):
         self.model = model
@@ -40,7 +40,9 @@ class PlotterModel(HasTraits):
         )
 
     def link_meshes_on_thread_worker(self, change):
-        if self.model.atlas is not None:
+        if self.model.atlas is None:
+            self.atlas_mesh = Mesh()
+        else:
             worker = Worker(self.plot_atlas_mesh, self.model.atlas)
             worker.moveToThread(self.thread)
             worker.finished.connect(partial(setattr, self, "atlas_mesh"))
@@ -59,26 +61,28 @@ class PlotterModel(HasTraits):
         worker.start.emit()
 
     @staticmethod
-    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> Optional[Points]:
-        if cells is not None:
-            max_name_ids = cells.name.cat.codes.max()
-            name_ids = cells.name.cat.codes
+    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> Points:
+        if cells is None:
+            return Points()
 
-            colors = (plt.cm.tab20c(name_ids / max_name_ids)[:, :4] * 255).astype(int)
+        max_name_ids = cells.name.cat.codes.max()
+        name_ids = cells.name.cat.codes
 
-            if selected_ids := selected_region_ids:
-                is_selected = cells.BGIdx.apply(
-                    lambda id: any(
-                        atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids if
-                        id != 0)
-                )
-                cells = cells[is_selected]
-                colors = colors[is_selected]
+        colors = (plt.cm.tab20c(name_ids / max_name_ids)[:, :4] * 255).astype(int)
 
-            if len(cells) > 0:
-                return Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
-            else:
-                return None
+        if selected_ids := selected_region_ids:
+            is_selected = cells.BGIdx.apply(
+                lambda id: any(
+                    atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids if
+                    id != 0)
+            )
+            cells = cells[is_selected]
+            colors = colors[is_selected]
+
+        if len(cells) > 0:
+            return Points(cells[['X', 'Y', 'Z']].values * 1000, r=3, c=colors)
+        else:
+            return Points()
 
 
 
