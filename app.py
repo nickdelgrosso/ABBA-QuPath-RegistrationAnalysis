@@ -6,7 +6,8 @@ from actions.load_cells import LoadCellsAction, LoadCellsModel
 from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from views.main_window import MainWindow
 from model import AppState
-from views.plot_3d import PlotterView, PlotterModel
+from views.plot_3d import PlotterModel
+from views.plot_3d.view import PlotterView
 from views.region_tree import BrainRegionTree, BrainRegionTreeViewModel
 from views.sidebar import Sidebar
 

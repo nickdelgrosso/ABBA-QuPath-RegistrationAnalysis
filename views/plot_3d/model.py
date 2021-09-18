@@ -1,19 +1,33 @@
 from dataclasses import dataclass, field
 from functools import partial
-from typing import Optional, Tuple
+from typing import Tuple, Optional
 
 import numpy as np
 import pandas as pd
 from PyQt5.QtCore import QThread
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
+from matplotlib.colors import ListedColormap
+from pandas import Series
 from traitlets import HasTraits, Instance
-from vedo import Plotter, Points, Mesh
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vedo import Mesh
 
 from model import AppState
 from utils import warn_if_slow
-from .utils import HasWidget, Worker
+from views.utils import Worker
+
+
+def is_parent(id: Series, selected_ids: Tuple[int], atlas: BrainGlobeAtlas) -> bool:
+    assert len(id.unique()) == 1
+    id = int(id.values[0])
+    if id != 0:
+        if id in selected_ids:
+            return True
+        else:
+            is_ancestor = atlas.hierarchy.is_ancestor
+            return any(is_ancestor(selected_id, id) for selected_id in selected_ids)
+    else:
+        return False
 
 
 @dataclass(frozen=True)
@@ -78,14 +92,18 @@ class PlotterModel(HasTraits):
 
     @staticmethod
     @warn_if_slow()
-    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> PointCloud:
+    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int],
+                   atlas: BrainGlobeAtlas, cmap: ListedColormap = plt.cm.tab20c) -> PointCloud:
         if cells is None:
             return PointCloud()
         df = cells.copy(deep=False)
-        df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame((plt.cm.tab20c((codes := df.name.cat.codes) / codes.max())[:, :4]))
+        df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame(cmap((codes := df.name.cat.codes) / codes.max())[:, :4])
         if selected_ids := selected_region_ids:
-            is_parent = lambda id: id != 0 and any(atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids)
-            df['isSelected'] = df.groupby('BGIdx', as_index=False).BGIdx.transform(is_parent)
+            df['isSelected'] = (
+               df
+               .groupby('BGIdx', as_index=False)
+               .BGIdx.transform(is_parent, selected_ids=selected_ids, atlas=atlas)
+            )
             df = df[df['isSelected']]
             if len(df) == 0:
                 return PointCloud()
@@ -96,25 +114,3 @@ class PlotterModel(HasTraits):
             alphas=df[['alpha']].values,
         )
         return points
-
-
-class PlotterView(HasWidget):
-
-    def __init__(self, model: PlotterModel):
-        self.model = model
-        self.item_points = {}
-
-        widget = QVTKRenderWindowInteractor()
-        HasWidget.__init__(self, widget=widget)
-        self.plotter = Plotter(qtWidget=widget)
-
-        self.model.observe(self.render, names=['atlas_mesh', 'points'])
-
-    def render(self, change):
-        actors = [self.model.atlas_mesh]
-        if len((points := self.model.points).coords) > 0:
-            coords = points.coords
-            colors = (np.hstack((points.colors, points.alphas)) * 255).astype(int)  # alphas needed for fast rendering.
-            actors.append(Points(coords, r=3, c=colors))
-
-        self.plotter.show(actors, at=0)
