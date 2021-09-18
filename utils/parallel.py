@@ -14,6 +14,10 @@ class Task(QRunnable):
         Runs function with args and kwargs when Task.run() is called, outputting to the Task.signals.finished signal.
 
         Meant to be used with QThreadPool.start(my_task)
+
+        Resources:
+          - https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/
+          - https://realpython.com/python-pyqt-qthread/#using-qthread-to-prevent-freezing-guis
         """
 
         super().__init__()
