@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Callable
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QThread, QRunnable
 from qtpy.QtWidgets import QWidget
 
 
@@ -15,23 +15,23 @@ class HasWidget(ABC):
         return self.__widget
 
 
-class Worker(QObject):
-    start = pyqtSignal()
-    started = pyqtSignal(str)
+class Signals(QObject):
     finished = pyqtSignal(object)
+
+
+class Worker(QRunnable):
 
     def __init__(self, fun: Callable, *args, **kwargs):
         super().__init__()
+        self._orig_thread_id = int(QThread.currentThreadId())
         self.fun = fun
         self.args = args
         self.kwargs = kwargs
-        self.start.connect(self.run)
+        self.signals = Signals()
 
     # @pyqtSlot
     def run(self):
-        self.finished.connect(self.deleteLater)
-        print('started working...')
-        self.started.emit("started run")
+        new_thread_id = int(QThread.currentThreadId())
+        assert self._orig_thread_id != new_thread_id, "Worker not running in seperate thread, pointless."
         result = self.fun(*self.args, **self.kwargs)
-        print('finished working...')
-        self.finished.emit(result)
+        self.signals.finished.emit(result)

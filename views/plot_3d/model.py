@@ -1,10 +1,11 @@
+import time
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Tuple, Optional
 
 import numpy as np
 import pandas as pd
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QThreadPool
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap
@@ -48,16 +49,8 @@ class PlotterModel(HasTraits):
 
     def register(self, model: AppState):
         self.model = model
-        self.create_thread()
-
         model.observe(self.link_cells_to_points, names=['selected_region_ids', 'cells'])
         model.observe(self.link_meshes_on_thread_worker, names=['atlas'])
-
-    def create_thread(self):
-        # from https://realpython.com/python-pyqt-qthread/#using-qthread-to-prevent-freezing-guis
-        self.thread = QThread()
-        self.thread.start()
-        self.thread.finished.connect(self.thread.deleteLater)
 
     @staticmethod
     def plot_atlas_mesh(atlas: BrainGlobeAtlas) -> Mesh:
@@ -74,9 +67,9 @@ class PlotterModel(HasTraits):
             self.atlas_mesh = Mesh()
         else:
             worker = Worker(self.plot_atlas_mesh, self.model.atlas)
-            worker.moveToThread(self.thread)
-            worker.finished.connect(partial(setattr, self, "atlas_mesh"))
-            worker.start.emit()
+            worker.signals.finished.connect(partial(setattr, self, "atlas_mesh"))
+            pool = QThreadPool.globalInstance()
+            pool.start(worker)
 
     def link_cells_to_points(self, change):
         model = self.model
@@ -86,9 +79,9 @@ class PlotterModel(HasTraits):
             selected_region_ids=model.selected_region_ids,
             atlas=model.atlas,
         )
-        worker.moveToThread(self.thread)
-        worker.finished.connect(partial(setattr, self, "points"))
-        worker.start.emit()
+        worker.signals.finished.connect(partial(setattr, self, "points"))
+        pool = QThreadPool.globalInstance()
+        pool.start(worker)
 
     @staticmethod
     @warn_if_slow()
