@@ -1,6 +1,8 @@
+from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional, Tuple
 
+import numpy as np
 import pandas as pd
 from PyQt5.QtCore import QThread
 from bg_atlasapi import BrainGlobeAtlas
@@ -14,9 +16,17 @@ from utils import warn_if_slow, since
 from .utils import HasWidget, Worker
 
 
+@dataclass(frozen=True)
+class PointCloud:
+    coords: np.ndarray = field(default=np.empty((0, 3), dtype=float))
+    colors: np.ndarray = field(default=np.empty((0, 3), dtype=float))
+    alphas: np.ndarray = field(default=np.empty((0, 1), dtype=float))
+
+
 class PlotterModel(HasTraits):
     atlas_mesh = Instance(Mesh, default_value=Mesh())
     cell_points = Instance(Points, default_value=Points())
+    points = Instance(PointCloud, default_value=PointCloud())
 
     def register(self, model: AppState):
         self.model = model
@@ -58,15 +68,15 @@ class PlotterModel(HasTraits):
             atlas=model.atlas,
         )
         worker.moveToThread(self.thread)
-        worker.finished.connect(partial(setattr, self, "cell_points"))
+        worker.finished.connect(partial(setattr, self, "points"))
         worker.start.emit()
 
 
     @staticmethod
     @warn_if_slow()
-    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> Points:
+    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> PointCloud:
         if cells is None:
-            return Points()
+            return PointCloud()
         df = cells.copy(deep=False)
         df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame((plt.cm.tab20c((codes := df.name.cat.codes) / codes.max())[:, :4]))
         if selected_ids := selected_region_ids:
@@ -74,12 +84,15 @@ class PlotterModel(HasTraits):
             df['isSelected'] = df.groupby('BGIdx', as_index=False).BGIdx.transform(is_parent)
             df = df[df['isSelected']]
             if len(df) == 0:
-                return Points()
+                return PointCloud()
 
-        colors = (df[['red', 'green', 'blue', 'alpha']] * 255).astype(int).values  # Points() is slow if alpha not supplied.
-        coords = df[['X', 'Y', 'Z']].values * 1000
-        points = Points(coords, r=3, c=colors)
+        points = PointCloud(
+            coords=df[['X', 'Y', 'Z']].values * 1000,
+            colors=df[['red', 'green', 'blue']],
+            alphas=df[['alpha']],
+        )
         return points
+
 
 
 class PlotterView(HasWidget):
@@ -92,7 +105,13 @@ class PlotterView(HasWidget):
         HasWidget.__init__(self, widget=widget)
         self.plotter = Plotter(qtWidget=widget)
 
-        self.model.observe(self.render, names=['atlas_mesh', 'cell_points'])
+        self.model.observe(self.render, names=['atlas_mesh', 'points'])
 
     def render(self, change):
-        self.plotter.show([self.model.cell_points, self.model.atlas_mesh], at=0)
+        actors = [self.model.atlas_mesh]
+        if len((points := self.model.points).coords) > 0:
+            coords = points.coords
+            colors = (np.hstack((points.colors, points.alphas)) * 255).astype(int)  # alphas needed for fast rendering.
+            actors.append(Points(coords, r=3, c=colors))
+
+        self.plotter.show(actors, at=0)
