@@ -14,8 +14,8 @@ from traitlets import HasTraits, Instance
 from vedo import Mesh
 
 from model import AppState
-from utils import warn_if_slow
-from views.utils import Worker
+from utils.parallel import Worker
+from utils.profiling import warn_if_slow
 
 
 def is_parent(id: Series, selected_ids: Tuple[int], atlas: BrainGlobeAtlas) -> bool:

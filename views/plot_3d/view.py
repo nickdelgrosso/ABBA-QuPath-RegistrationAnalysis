@@ -2,7 +2,7 @@ import numpy as np
 from vedo import Plotter, Points
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from utils import warn_if_slow
+from utils.profiling import warn_if_slow
 from views.plot_3d import PlotterModel
 from views.utils import HasWidget
 
