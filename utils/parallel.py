@@ -3,19 +3,25 @@ from typing import Callable
 from PyQt5.QtCore import QObject, pyqtSignal, QRunnable, QThread
 
 
-class WorkerSignals(QObject):
+class TaskSignals(QObject):
     finished = pyqtSignal(object)
 
 
-class Worker(QRunnable):
+class Task(QRunnable):
 
     def __init__(self, fun: Callable, *args, **kwargs):
+        """
+        Runs function with args and kwargs when Task.run() is called, outputting to the Task.signals.finished signal.
+
+        Meant to be used with QThreadPool.start(my_task)
+        """
+
         super().__init__()
         self._orig_thread_id = int(QThread.currentThreadId())
         self.fun = fun
         self.args = args
         self.kwargs = kwargs
-        self.signals = WorkerSignals()
+        self.signals = TaskSignals()
 
     # @pyqtSlot
     def run(self):

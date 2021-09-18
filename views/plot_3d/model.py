@@ -14,7 +14,7 @@ from traitlets import HasTraits, Instance
 from vedo import Mesh
 
 from model import AppState
-from utils.parallel import Worker
+from utils.parallel import Task
 from utils.profiling import warn_if_slow
 
 
@@ -66,14 +66,14 @@ class PlotterModel(HasTraits):
         if self.model.atlas is None:
             self.atlas_mesh = Mesh()
         else:
-            worker = Worker(self.plot_atlas_mesh, self.model.atlas)
+            worker = Task(self.plot_atlas_mesh, self.model.atlas)
             worker.signals.finished.connect(partial(setattr, self, "atlas_mesh"))
             pool = QThreadPool.globalInstance()
             pool.start(worker)
 
     def link_cells_to_points(self, change):
         model = self.model
-        worker = Worker(
+        worker = Task(
             self.plot_cells,
             cells=model.cells,
             selected_region_ids=model.selected_region_ids,
