@@ -67,31 +67,18 @@ class PlotterModel(HasTraits):
     def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> Points:
         if cells is None:
             return Points()
-        t = since()
-        print(1, next(t))
         df = cells.copy(deep=False)
-        print(2, next(t))
         df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame((plt.cm.tab20c((codes := df.name.cat.codes) / codes.max())[:, :4]))
-        print(3, next(t))
         if selected_ids := selected_region_ids:
-            print(4, next(t))
             is_parent = lambda id: id != 0 and any(atlas.hierarchy.is_ancestor(selected_id, id) for selected_id in selected_ids)
-            print(5, next(t))
             df['isSelected'] = df.groupby('BGIdx', as_index=False).BGIdx.transform(is_parent)
-            print(6, next(t))
             df = df[df['isSelected']]
-            print(7, next(t))
             if len(df) == 0:
                 return Points()
 
-        print('a', next(t))
         colors = (df[['red', 'green', 'blue', 'alpha']] * 255).astype(int).values  # Points() is slow if alpha not supplied.
-        print('a1', next(t))
         coords = df[['X', 'Y', 'Z']].values * 1000
-        print('a2', next(t))
-        print(colors)
         points = Points(coords, r=3, c=colors)
-        print('b', next(t))
         return points
 
 
