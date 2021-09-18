@@ -12,7 +12,7 @@ from vedo import Plotter, Points, Mesh
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from model import AppState
-from utils import warn_if_slow, since
+from utils import warn_if_slow
 from .utils import HasWidget, Worker
 
 
@@ -22,10 +22,14 @@ class PointCloud:
     colors: np.ndarray = field(default=np.empty((0, 3), dtype=float))
     alphas: np.ndarray = field(default=np.empty((0, 1), dtype=float))
 
+    def __post_init__(self):
+        assert self.coords.ndim == 2 and self.coords.shape[1] == 3
+        assert self.colors.ndim == 2 and self.colors.shape[1] == 3
+        assert self.alphas.ndim == 2 and self.alphas.shape[1] == 1
+
 
 class PlotterModel(HasTraits):
     atlas_mesh = Instance(Mesh, default_value=Mesh())
-    cell_points = Instance(Points, default_value=Points())
     points = Instance(PointCloud, default_value=PointCloud())
 
     def register(self, model: AppState):
@@ -43,8 +47,9 @@ class PlotterModel(HasTraits):
 
     @staticmethod
     def plot_atlas_mesh(atlas: BrainGlobeAtlas) -> Mesh:
+        filename = str(atlas.structures[997]['mesh_filename'])
         return Mesh(
-            str(atlas.structures[997]['mesh_filename']),
+            filename,
             alpha=0.1,
             computeNormals=True,
             c=(1., 1., 1.)
@@ -71,7 +76,6 @@ class PlotterModel(HasTraits):
         worker.finished.connect(partial(setattr, self, "points"))
         worker.start.emit()
 
-
     @staticmethod
     @warn_if_slow()
     def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int], atlas: BrainGlobeAtlas) -> PointCloud:
@@ -88,11 +92,10 @@ class PlotterModel(HasTraits):
 
         points = PointCloud(
             coords=df[['X', 'Y', 'Z']].values * 1000,
-            colors=df[['red', 'green', 'blue']],
-            alphas=df[['alpha']],
+            colors=df[['red', 'green', 'blue']].values,
+            alphas=df[['alpha']].values,
         )
         return points
-
 
 
 class PlotterView(HasWidget):
