@@ -33,9 +33,9 @@ class LoadCellsModel(HasTraits):
 class LoadCellsAction(QAction):
 
     def __init__(self, model: LoadCellsModel, *args, **kwargs):
-        self.vmodel = model
+        self.model = model
         super().__init__(*args, **kwargs)
-        self.setText(self.vmodel.text)
+        self.setText(self.model.text)
         self.triggered.connect(self.run)
 
     def run(self):
@@ -45,5 +45,5 @@ class LoadCellsAction(QAction):
         )
 
         filenames = [Path(f) for f in filenames]
-        self.vmodel.load_files(filenames=filenames)
+        self.model.load_files(filenames=filenames)
 
