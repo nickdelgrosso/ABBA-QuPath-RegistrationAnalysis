@@ -31,6 +31,7 @@ if __name__ == '__main__':
     load_cells_action_model.register(model=model)
 
     colormap_selector_model = ColormapSelectorModel()
+    colormap_selector_model.register(model=model)
 
     sidebar_model = SidebarModel()
 

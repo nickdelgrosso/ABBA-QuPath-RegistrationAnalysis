@@ -1,19 +1,26 @@
-from enum import Enum, auto
-
 from PyQt5.QtWidgets import QComboBox
-from traitlets import HasTraits, List as TList, Unicode, All
+from traitlets import HasTraits, List as TList, Unicode, directional_link
 
+from model import Colormap, AppState
 from views.utils import HasWidget
 
 
-class Colormap(Enum):
-    tab20c = auto()
-    viridis = auto()
-
-
 class ColormapSelectorModel(HasTraits):
-    options = TList(Unicode, default_value=[cmap.name for cmap in Colormap])
-    selected = Unicode(default_value=options.default_args[0][0])
+    options = TList(Unicode, default_value=["Unknown", "Unknown2"])
+    selected = Unicode(default_value="Unknown")
+
+    def register(self, model: AppState):
+        directional_link(
+            (model, 'colormap_options'),
+            (self, 'options'),
+            lambda cmaps: [cmap.name for cmap in cmaps]
+        )
+        self.selected = model.selected_colormap.name
+        directional_link(
+            (self, 'selected'),
+            (model, 'selected_colormap'),
+            lambda new: getattr(Colormap, new),
+        )
 
 
 class ColormapSelector(HasWidget):

@@ -1,6 +1,8 @@
+from enum import Enum, auto
+
 import pandas as pd
 from bg_atlasapi import BrainGlobeAtlas
-from traitlets import HasTraits, Instance, observe, Tuple, Int
+from traitlets import HasTraits, Instance, observe, Tuple, Int, List
 
 
 def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
@@ -21,11 +23,23 @@ def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
     )#.sample(10000)
 
 
+class Colormap(Enum):
+    tab20c = auto()
+    viridis = auto()
+
+
 class AppState(HasTraits):
     atlas = Instance(BrainGlobeAtlas, allow_none=True)
-    cells = Instance(klass=pd.DataFrame, allow_none=True)
+    cells = Instance(pd.DataFrame, allow_none=True)
     selected_region_ids = Tuple(default_value=())  # should be tuple of ints
+    colormap_options = List(Instance(Colormap), default_value=list(Colormap))
+    selected_colormap = Instance(Colormap, default_value=Colormap.tab20c)
+
 
     @observe('selected_region_ids')
     def _on_change_selected_region_ids(self, change):
         print(f"Selected: {change['new']}")
+
+    @observe('selected_colormap')
+    def _on_colormap_change(self, change):
+        print('changed colormap to', self.selected_colormap)
