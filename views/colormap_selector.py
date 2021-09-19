@@ -22,8 +22,9 @@ class ColormapSelector(HasWidget):
         HasWidget.__init__(self, widget=self.dropdown)
 
         self.model = model
-        self.model.observe(self.update_cmap_dropdown_values, ['options'], type=All)
-        self.model.options  # does have effect: triggers a notification (note: find way to not need this)
+        self.model.observe(self.update_cmap_dropdown_values, ['options'])
+        self.model.observe(self.update_selected, ['selected'])
+        self.update_cmap_dropdown_values(None)
         self.dropdown.currentTextChanged.connect(self.select_cmap_from_dropdown)
 
 
@@ -31,6 +32,9 @@ class ColormapSelector(HasWidget):
         self.dropdown.clear()
         for cmap in self.model.options:
             self.dropdown.addItem(cmap)
+        self.dropdown.setCurrentText(self.model.selected)
+
+    def update_selected(self, changed):
         self.dropdown.setCurrentText(self.model.selected)
 
     def select_cmap_from_dropdown(self, text):
