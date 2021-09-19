@@ -6,7 +6,9 @@ from PyQt5.QtWidgets import QAction, QFileDialog
 from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Unicode, directional_link, Instance
 
-from model import AppState, read_detection_file
+from model import AppState
+from data.load_data import read_detection_file
+
 
 class LoadCellsModel(HasTraits):
     text = Unicode("&Load TSV Files")
