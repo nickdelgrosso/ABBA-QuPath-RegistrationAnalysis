@@ -10,6 +10,7 @@ from views.plot_3d import PlotterModel
 from views.plot_3d.view import PlotterView
 from views.region_tree import BrainRegionTree, BrainRegionTreeViewModel
 from views.sidebar import Sidebar, SidebarModel
+from views.colormap_selector import ColormapSelectorModel, ColormapSelector
 
 if __name__ == '__main__':
 
@@ -29,13 +30,21 @@ if __name__ == '__main__':
     load_cells_action_model = LoadCellsModel()
     load_cells_action_model.register(model=model)
 
+    colormap_selector_model = ColormapSelectorModel()
+    colormap_selector = ColormapSelector(model=colormap_selector_model)
+
     sidebar_model = SidebarModel()
 
     win = MainWindow(
         main_widgets=[
             BrainRegionTree(model=brain_region_tree_model),
             PlotterView(model=plotter_model),
-            Sidebar(model=sidebar_model),
+            Sidebar(
+                model=sidebar_model,
+                widgets=[
+                    colormap_selector,
+                ]
+            ),
         ],
         menu_actions=[
             LoadCellsAction(model=load_cells_action_model),
