@@ -10,7 +10,7 @@ from views.plot_3d import PlotterModel
 from views.plot_3d.view import PlotterView
 from views.region_tree import BrainRegionTree, BrainRegionTreeViewModel
 from views.sidebar import Sidebar, SidebarModel
-from views.colormap_selector import ColormapSelectorModel, ColormapSelector
+from views.text_selector import TextSelectorModel, DropdownTextSelectorView
 
 if __name__ == '__main__':
 
@@ -30,8 +30,12 @@ if __name__ == '__main__':
     load_cells_action_model = LoadCellsModel()
     load_cells_action_model.register(model=model)
 
-    colormap_selector_model = ColormapSelectorModel()
-    colormap_selector_model.register(model=model)
+    colormap_selector_model = TextSelectorModel()
+    colormap_selector_model.register(
+        model=model,
+        options_attr='colormap_options',
+        selected_attr='selected_colormap',
+    )
 
     sidebar_model = SidebarModel()
 
@@ -42,7 +46,7 @@ if __name__ == '__main__':
             Sidebar(
                 model=sidebar_model,
                 widgets=[
-                    ColormapSelector(model=colormap_selector_model),
+                    DropdownTextSelectorView(model=colormap_selector_model),
                 ]
             ),
         ],

@@ -5,24 +5,24 @@ from model import AppState
 from views.utils import HasWidget
 
 
-class ColormapSelectorModel(HasTraits):
+class TextSelectorModel(HasTraits):
     options = TList(Unicode, default_value=["Unknown", "Unknown2"])
     selected = Unicode(default_value="Unknown")
 
-    def register(self, model: AppState):
+    def register(self, model: AppState, options_attr: str, selected_attr: str):
         directional_link(
-            (model, 'colormap_options'),
+            (model, options_attr),
             (self, 'options'),
         )
         self.selected = model.selected_colormap
         directional_link(
             (self, 'selected'),
-            (model, 'selected_colormap'),
+            (model, selected_attr),
         )
 
 
-class ColormapSelector(HasWidget):
-    def __init__(self, model: ColormapSelectorModel):
+class DropdownTextSelectorView(HasWidget):
+    def __init__(self, model: TextSelectorModel):
         self.dropdown = QComboBox()
         HasWidget.__init__(self, widget=self.dropdown)
 
