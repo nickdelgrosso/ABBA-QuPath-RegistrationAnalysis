@@ -1,8 +1,12 @@
+from functools import partial
+
+from PyQt5.QtCore import QThreadPool
 from PyQt5.QtWidgets import QAction
 from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Unicode, Instance, directional_link
 
 from model import AppState
+from utils.parallel import Task
 
 
 class LoadAtlasActionModel(HasTraits):
@@ -13,7 +17,10 @@ class LoadAtlasActionModel(HasTraits):
         directional_link((self, "atlas"), target=(model, "atlas"))
 
     def run(self):
-        self.atlas = BrainGlobeAtlas("allen_mouse_25um")
+        task = Task(BrainGlobeAtlas, "allen_mouse_25um")
+        task.signals.finished.connect(partial(setattr, self, 'atlas'))
+        pool = QThreadPool.globalInstance()
+        pool.start(task)
 
 
 class LoadAtlasAction(QAction):

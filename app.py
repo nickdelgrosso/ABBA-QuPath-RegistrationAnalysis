@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from actions.load_cells import LoadCellsAction, LoadCellsModel
 from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from views.analysis_selector import AnalysisSelectorModel, AnalysisSelectorView
+from views.histogram import HistogramView, HistogramModel
 from views.main_window import MainWindow
 from model import AppState
 from views.plot_3d import PlotterModel
@@ -43,6 +44,9 @@ if __name__ == '__main__':
 
     sidebar_model = SidebarModel()
 
+    histogram_model = HistogramModel()
+    histogram_model.register(model=model)
+
     win = MainWindow(
         main_widgets=[
             BrainRegionTree(model=brain_region_tree_model),
@@ -52,6 +56,7 @@ if __name__ == '__main__':
                 widgets=[
                     AnalysisSelectorView(model=analysis_selector_model),
                     DropdownTextSelectorView(model=colormap_selector_model),
+                    HistogramView(model=histogram_model),
                 ]
             ),
         ],
