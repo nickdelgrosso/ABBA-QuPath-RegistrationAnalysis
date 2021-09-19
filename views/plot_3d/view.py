@@ -61,9 +61,14 @@ class PlotterView(HasWidget):
     @warn_if_slow()
     def render(self, change):
         actors = [self._atlas_mesh]
+        # box = self._atlas_mesh.box().wireframe().alpha(0.2).color((255, 0, 0))
+
+        # actors.append(box)
         if len((points := self.model.points).coords) > 0:
             coords = points.coords
             colors = (np.hstack((points.colors, points.alphas)) * 255).astype(int)  # alphas needed for fast rendering.
             actors.append(Points(coords, r=3, c=colors))
 
         self.plotter.show(actors, at=0)
+        self.plotter.addInset(self._atlas_mesh, pos=(.9, .9), size=0.1, c='w', draggable=True)
+        # note: look at from vedo.applications import SlicerPlotter for inspiration
