@@ -2,7 +2,8 @@ from enum import Enum, auto
 
 import pandas as pd
 from bg_atlasapi import BrainGlobeAtlas
-from traitlets import HasTraits, Instance, observe, Tuple, Int, List
+from matplotlib import pyplot as plt
+from traitlets import HasTraits, Instance, observe, Tuple, Int, List, UseEnum, Unicode
 
 
 def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
@@ -23,17 +24,12 @@ def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
     )#.sample(10000)
 
 
-class Colormap(Enum):
-    tab20c = auto()
-    viridis = auto()
-
-
 class AppState(HasTraits):
     atlas = Instance(BrainGlobeAtlas, allow_none=True)
     cells = Instance(pd.DataFrame, allow_none=True)
     selected_region_ids = Tuple(default_value=())  # should be tuple of ints
-    colormap_options = List(Instance(Colormap), default_value=list(Colormap))
-    selected_colormap = Instance(Colormap, default_value=Colormap.tab20c)
+    colormap_options = List(Unicode(), default_value=[cmap for cmap in plt.colormaps() if not cmap.endswith('_r')])#['tab20c', 'viridis'])
+    selected_colormap = Unicode(default_value='tab20c')
 
 
     @observe('selected_region_ids')

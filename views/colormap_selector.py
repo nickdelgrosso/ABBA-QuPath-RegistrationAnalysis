@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QComboBox
 from traitlets import HasTraits, List as TList, Unicode, directional_link
 
-from model import Colormap, AppState
+from model import AppState
 from views.utils import HasWidget
 
 
@@ -13,13 +13,11 @@ class ColormapSelectorModel(HasTraits):
         directional_link(
             (model, 'colormap_options'),
             (self, 'options'),
-            lambda cmaps: [cmap.name for cmap in cmaps]
         )
-        self.selected = model.selected_colormap.name
+        self.selected = model.selected_colormap
         directional_link(
             (self, 'selected'),
             (model, 'selected_colormap'),
-            lambda new: getattr(Colormap, new),
         )
 
 

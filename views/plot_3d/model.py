@@ -10,7 +10,7 @@ from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap
 from pandas import Series
-from traitlets import HasTraits, Instance
+from traitlets import HasTraits, Instance, Unicode, directional_link
 from vedo import Mesh
 
 from model import AppState
@@ -49,7 +49,9 @@ class PlotterModel(HasTraits):
 
     def register(self, model: AppState):
         self.model = model
-        model.observe(self.link_cells_to_points, names=['selected_region_ids', 'cells'])
+        model.observe(self.link_cells_to_points, names=[
+            'selected_region_ids', 'cells', 'selected_colormap'
+        ])
         model.observe(self.link_meshes_on_thread_worker, names=['atlas'])
 
     @staticmethod
@@ -78,6 +80,7 @@ class PlotterModel(HasTraits):
             cells=model.cells,
             selected_region_ids=model.selected_region_ids,
             atlas=model.atlas,
+            cmap=self.model.selected_colormap
         )
         worker.signals.finished.connect(partial(setattr, self, "points"))
         pool = QThreadPool.globalInstance()
@@ -86,10 +89,12 @@ class PlotterModel(HasTraits):
     @staticmethod
     @warn_if_slow()
     def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int],
-                   atlas: BrainGlobeAtlas, cmap: ListedColormap = plt.cm.tab20c) -> PointCloud:
+                   atlas: BrainGlobeAtlas, cmap: str = 'tab20c') -> PointCloud:
         if cells is None:
             return PointCloud()
+        print('plotting')
         df = cells.copy(deep=False)
+        cmap: ListedColormap = getattr(plt.cm, cmap)
         df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame(cmap((codes := df.name.cat.codes) / codes.max())[:, :4])
         if selected_ids := selected_region_ids:
             df['isSelected'] = (
