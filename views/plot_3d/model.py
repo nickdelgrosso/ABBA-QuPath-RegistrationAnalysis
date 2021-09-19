@@ -79,6 +79,7 @@ class PlotterModel(HasTraits):
             return PointCloud()
         print('plotting')
         df = cells.copy(deep=False)
+        print(df.head(), df.columns, sep='\n')
         cmap: ListedColormap = getattr(plt.cm, cmap)
         df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame(cmap((codes := df.name.cat.codes) / codes.max())[:, :4])
         if selected_ids := selected_region_ids:
