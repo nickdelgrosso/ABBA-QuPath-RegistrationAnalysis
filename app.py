@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication
 
 from actions.load_cells import LoadCellsAction, LoadCellsModel
 from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
+from views.analysis_selector import AnalysisSelectorModel, AnalysisSelectorView
 from views.main_window import MainWindow
 from model import AppState
 from views.plot_3d import PlotterModel
@@ -37,6 +38,9 @@ if __name__ == '__main__':
         selected_attr='selected_colormap',
     )
 
+    analysis_selector_model = AnalysisSelectorModel()
+    analysis_selector_model.register(model=model)
+
     sidebar_model = SidebarModel()
 
     win = MainWindow(
@@ -46,6 +50,7 @@ if __name__ == '__main__':
             Sidebar(
                 model=sidebar_model,
                 widgets=[
+                    AnalysisSelectorView(model=analysis_selector_model),
                     DropdownTextSelectorView(model=colormap_selector_model),
                 ]
             ),
