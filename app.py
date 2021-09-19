@@ -9,7 +9,7 @@ from model import AppState
 from views.plot_3d import PlotterModel
 from views.plot_3d.view import PlotterView
 from views.region_tree import BrainRegionTree, BrainRegionTreeViewModel
-from views.sidebar import Sidebar
+from views.sidebar import Sidebar, SidebarModel
 
 if __name__ == '__main__':
 
@@ -29,14 +29,13 @@ if __name__ == '__main__':
     load_cells_action_model = LoadCellsModel()
     load_cells_action_model.register(model=model)
 
-
-
+    sidebar_model = SidebarModel()
 
     win = MainWindow(
         main_widgets=[
             BrainRegionTree(model=brain_region_tree_model),
             PlotterView(model=plotter_model),
-            Sidebar(model=model),
+            Sidebar(model=sidebar_model),
         ],
         menu_actions=[
             LoadCellsAction(model=load_cells_action_model),
