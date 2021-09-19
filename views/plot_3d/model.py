@@ -1,17 +1,17 @@
-import time
+from dataclasses import dataclass, field
 from dataclasses import dataclass, field
 from functools import partial
+from pathlib import Path
 from typing import Tuple, Optional
 
 import numpy as np
 import pandas as pd
-from PyQt5.QtCore import QThread, QThreadPool
+from PyQt5.QtCore import QThreadPool
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap
 from pandas import Series
-from traitlets import HasTraits, Instance, Unicode, directional_link
-from vedo import Mesh
+from traitlets import HasTraits, Instance, directional_link
 
 from model import AppState
 from utils.parallel import Task
@@ -44,34 +44,19 @@ class PointCloud:
 
 
 class PlotterModel(HasTraits):
-    atlas_mesh = Instance(Mesh, default_value=Mesh())
+    atlas_mesh = Instance(Path, allow_none=True)
     points = Instance(PointCloud, default_value=PointCloud())
 
     def register(self, model: AppState):
         self.model = model
+        directional_link(
+            (model, 'atlas'),
+            (self, 'atlas_mesh'),
+            lambda atlas: Path(str(atlas.structures[997]['mesh_filename'])) if atlas is not None else None
+        )
         model.observe(self.link_cells_to_points, names=[
             'selected_region_ids', 'cells', 'selected_colormap'
         ])
-        model.observe(self.link_meshes_on_thread_worker, names=['atlas'])
-
-    @staticmethod
-    def plot_atlas_mesh(atlas: BrainGlobeAtlas) -> Mesh:
-        filename = str(atlas.structures[997]['mesh_filename'])
-        return Mesh(
-            filename,
-            alpha=0.1,
-            computeNormals=True,
-            c=(1., 1., 1.)
-        )
-
-    def link_meshes_on_thread_worker(self, change):
-        if self.model.atlas is None:
-            self.atlas_mesh = Mesh()
-        else:
-            worker = Task(self.plot_atlas_mesh, self.model.atlas)
-            worker.signals.finished.connect(partial(setattr, self, "atlas_mesh"))
-            pool = QThreadPool.globalInstance()
-            pool.start(worker)
 
     def link_cells_to_points(self, change):
         model = self.model
