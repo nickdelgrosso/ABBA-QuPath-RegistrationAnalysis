@@ -3,8 +3,10 @@ from bg_atlasapi import BrainGlobeAtlas
 
 
 def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
+    df = pd.read_csv(filename, sep='\t')
+    print(df.columns)
     return (
-        pd.read_csv(filename, sep='\t')
+        df
         .rename(columns={'Allen CCFv3 X mm': 'X', 'Allen CCFv3 Y mm': 'Y', 'Allen CCFv3 Z mm': 'Z'})
         .astype({'X': float, 'Y': float, 'Z': float})
         .pipe(lambda df: df.assign(
