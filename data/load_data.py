@@ -14,7 +14,6 @@ def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
             .astype({'X': float, 'Y': float, 'Z': float})
             .pipe(lambda df: df.assign(BGIdx=get_brain_region_label(df.X.values, df.Y.values, df.Z.values, annotation=atlas.annotation, resolution=atlas.resolution)))
             .merge(atlas.lookup_df, right_on="id", left_on="BGIdx", how="left")
-            .astype({'acronym': 'category', 'name': 'category'})
             .drop(columns=['id'])
     )  # .sample(10000)
 
@@ -27,3 +26,9 @@ def get_brain_region_label(x, y, z, annotation: np.ndarray, resolution: Tuple[in
         np.clip((y / (ry / 1000)).astype(int), 0, sy-1),
         np.clip((z / (rz / 1000)).astype(int), 0, sz-1),
     ]
+
+
+def read_detection_files(filenames, atlas):
+    df = pd.concat(read_detection_file(filename=filename, atlas=atlas) for filename in filenames)
+    df = df.astype({'acronym': 'category', 'name': 'category'})
+    return df

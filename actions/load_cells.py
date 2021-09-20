@@ -7,7 +7,7 @@ from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Unicode, directional_link, Instance
 
 from model import AppState
-from data.load_data import read_detection_file
+from data.load_data import read_detection_files
 
 
 class LoadCellsModel(HasTraits):
@@ -22,13 +22,9 @@ class LoadCellsModel(HasTraits):
     def load_files(self, filenames: List[Path]):
         if not filenames:
             return
-        filename, *other_filenames = filenames
-        if other_filenames:
-            raise NotImplementedError("Multiple Filenames not yet implemented")
-
         if self.atlas is None:
             raise ValueError("No atlas detected, cannot register brain regions")
-        df = read_detection_file(filename=filename, atlas=self.atlas)
+        df = read_detection_files(filenames, atlas)
         self.cells = df
 
 
