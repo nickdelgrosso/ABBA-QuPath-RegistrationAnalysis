@@ -24,7 +24,7 @@ class LoadCellsModel(HasTraits):
             return
         if self.atlas is None:
             raise ValueError("No atlas detected, cannot register brain regions")
-        df = read_detection_files(filenames, atlas)
+        df = read_detection_files(filenames, atlas=self.atlas)
         self.cells = df
 
 
