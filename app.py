@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication
 
 from actions.load_cells import LoadCellsAction, LoadCellsModel
 from actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
+from actions.save_cells import SaveCellsAction, SaveCellsActionModel
 from views.analysis_selector import AnalysisSelectorModel, AnalysisSelectorView
 from views.histogram import HistogramView, HistogramModel
 from views.main_window import MainWindow
@@ -31,6 +32,9 @@ if __name__ == '__main__':
 
     load_cells_action_model = LoadCellsModel()
     load_cells_action_model.register(model=model)
+
+    save_cells_action_model = SaveCellsActionModel()
+    save_cells_action_model.register(model=model)
 
     colormap_selector_model = TextSelectorModel()
     colormap_selector_model.register(
@@ -63,6 +67,7 @@ if __name__ == '__main__':
         menu_actions=[
             LoadCellsAction(model=load_cells_action_model),
             LoadAtlasAction(model=load_atlas_action_model),
+            SaveCellsAction(model=save_cells_action_model),
         ]
     )
     win.show()
