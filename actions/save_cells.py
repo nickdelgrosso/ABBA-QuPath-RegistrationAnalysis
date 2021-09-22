@@ -12,7 +12,7 @@ class SaveCellsActionModel:
         self.model = model
 
     def savedata(self, directory):
-        self.model.cells.to_csv(Path(directory)/'output.csv')
+        self.model.cells.to_feather(Path(directory)/'output.feather')
         print("File saved")
 
 

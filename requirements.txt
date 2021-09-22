@@ -8,3 +8,4 @@ pyqt5~=5.15.4
 treelib~=1.6.1
 traitlets~=5.1.0
 bg-atlasapi
+pyarrow
