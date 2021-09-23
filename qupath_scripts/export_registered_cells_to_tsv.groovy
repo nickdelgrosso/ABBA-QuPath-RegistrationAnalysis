@@ -10,7 +10,6 @@ import qupath.lib.objects.PathCellObject
 import ch.epfl.biop.qupath.transform.*
 import net.imglib2.RealPoint
 
-print "starting script"
 
 // https://github.com/BIOP/qupath-biop-extensions/blob/master/src/test/resources/abba_scripts/importABBAResults.groovy
 def targetEntry = getProjectEntry()
@@ -25,11 +24,15 @@ if (!fTransform.exists()) {
 
 def pixelToCCFTransform = Warpy.getRealTransform(fTransform).inverse(); // Needs the inverse transform
 
-print "got transform"
 
+def imageData = getCurrentImageData();
+imageName = ServerTools.getDisplayableImageName(imageData.getServer())
 
-getCellObjects().eachWithIndex{detection, index -> {
-    detection.setName((index + 1).toString());
+if (getCellObjects().isEmpty()) {
+    throw new Exception("No cell detections in this file. Please run cell and subcellular spot detection on $imageName.")
+}
+
+getCellObjects().forEach{detection -> {
     RealPoint ccfCoordinates = new RealPoint(3);
     ccfCoordinates.setPosition([
         detection.getROI().getCentroidX(),
@@ -41,6 +44,11 @@ getCellObjects().eachWithIndex{detection, index -> {
     ml.addMeasurement("Allen CCFv3 X mm", ccfCoordinates.getDoublePosition(0) )
     ml.addMeasurement("Allen CCFv3 Y mm", ccfCoordinates.getDoublePosition(1) )
     ml.addMeasurement("Allen CCFv3 Z mm", ccfCoordinates.getDoublePosition(2) )
+
+    if (!ml.containsNamedMeasurement("Subcellular: Channel 5: Num single spots")) {
+        throw new Exception("Subcellular spot detection incomplete in this file. Please rerun subcellular spot detection on $imageName.")
+    }
+
     ml.addMeasurement("Esr1 (Opal 480): Num Spots", ml.getMeasurementValue("Subcellular: Channel 2: Num single spots") )
     ml.addMeasurement("Prg (Opal 520): Num Spots", ml.getMeasurementValue("Subcellular: Channel 3: Num single spots") )
     ml.addMeasurement("Prlr (Opal 570): Num Spots", ml.getMeasurementValue("Subcellular: Channel 4: Num single spots") )
@@ -48,20 +56,15 @@ getCellObjects().eachWithIndex{detection, index -> {
 }}
 
 
-print "added mesasurements"
-
 // save annotations
 File directory = new File(buildFilePath(PROJECT_BASE_DIR,'export'));
 directory.mkdirs();
-def imageData = getCurrentImageData();
-imageName = ServerTools.getDisplayableImageName(imageData.getServer())
 def filename = imageName.take(imageName.indexOf('.'))
 
 saveMeasurements(
     imageData,
     PathCellObject.class,
-    buildFilePath(directory.toString(),filename + '.tsv'), 
-    "Name",
+    buildFilePath(directory.toString(),filename + '.tsv'),
     "Class", 
     "Allen CCFv3 X mm",
     "Allen CCFv3 Y mm",
@@ -71,5 +74,3 @@ saveMeasurements(
     "Prlr (Opal 570): Num Spots",
     "Oxt (Opal 620): Num Spots",
 );
-
-print "saved file"
