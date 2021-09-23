@@ -8,7 +8,7 @@ with open('README.md') as f:
 
 setup(
     name='ABBA-QuPath-RegistrationExporter',
-    version='0.1.2',
+    version='0.1.3',
     packages=find_packages(),
     url='',
     license='MIT',
@@ -20,5 +20,8 @@ setup(
     install_requires=requirements,
     entry_points={'console_scripts':[
         "regexport=regexport.app:main"
-    ]}
+    ]},
+    package_data={
+        'regexport': ['qupath_scripts/*.groovy'],
+    }
 )
