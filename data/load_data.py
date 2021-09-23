@@ -41,6 +41,6 @@ def get_brain_region_label(x, y, z, annotation: np.ndarray, resolution: Tuple[in
 
 
 def read_detection_files(filenames: List[Path], atlas):
-    df = pd.concat(read_detection_file(filename=filename, atlas=atlas) for filename in filenames)
+    df = pd.concat((read_detection_file(filename=filename, atlas=atlas) for filename in filenames), ignore_index=True)
     df = df.astype({'Acronym': 'category', 'BrainRegion': 'category', 'Image': 'category'})
     return df

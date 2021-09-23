@@ -13,25 +13,21 @@ class SaveCellsActionModel:
 
     def savedata(self, directory):
         print('File saving...')
-        df = self.model.cells.melt(
-            id_vars=['Image', 'BrainRegion', 'Acronym', 'X', 'Y', 'Z'],
-            value_vars=[col for col in self.model.cells.columns if "Num Spots" in col],
-            value_name='NumSpots',
-            var_name='HormoneReceptor',
-        )
-        df = df.astype({
+
+        types = {
             'Image': 'category',
-            "HormoneReceptor": 'category',
             'BrainRegion': 'category',
             'Acronym': 'category',
-            'NumSpots': 'uint16',
             'X': 'float32',
             'Y': 'float32',
             'Z': 'float32',
-        })
+        }
+
+        types.update({col: 'uint16' for col in self.model.cells.columns if "Num Spots" in col})
+        df = self.model.cells.astype(types)
 
         print(df.info())
-        df.to_feather(Path(directory)/'output.feather')
+        df.to_feather(Path(directory) / 'output.feather')
         print("File saved")
 
 
