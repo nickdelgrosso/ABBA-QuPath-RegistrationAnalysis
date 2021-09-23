@@ -50,7 +50,7 @@ def main():
                 widgets=[
                     AnalysisSelectorView(model=analysis_selector_model),
                     DropdownTextSelectorView(model=colormap_selector_model),
-                    HistogramView(model=histogram_model),
+                    # HistogramView(model=histogram_model),
                 ]
             ),
         ],
