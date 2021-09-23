@@ -8,7 +8,7 @@ with open('README.md') as f:
 
 setup(
     name='ABBA-QuPath-RegistrationExporter',
-    version='0.1.1',
+    version='0.1.2',
     packages=find_packages(),
     url='',
     license='MIT',
@@ -16,6 +16,7 @@ setup(
     author_email='delgrosso.nick@gmail.com',
     description='A QuPath-Abba Registration Exporter Application for Mouse Sections',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     install_requires=requirements,
     entry_points={'console_scripts':[
         "regexport=regexport.app:main"
