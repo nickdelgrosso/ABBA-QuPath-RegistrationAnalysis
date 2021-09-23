@@ -1,11 +1,12 @@
-from typing import Tuple
+from pathlib import Path
+from typing import Tuple, List
 
 import numpy as np
 import pandas as pd
 from bg_atlasapi import BrainGlobeAtlas
 
 
-def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
+def read_detection_file(filename: Path, atlas: BrainGlobeAtlas) -> pd.DataFrame:
     df = pd.read_csv(filename, sep='\t')
     print(df.columns)
     return (
@@ -25,6 +26,7 @@ def read_detection_file(filename: str, atlas: BrainGlobeAtlas) -> pd.DataFrame:
                 'acronym': 'Acronym',
             })
             .drop(columns=['id'])
+            .assign(Image=filename.name)
     )  # .sample(10000)
 
 
@@ -38,7 +40,7 @@ def get_brain_region_label(x, y, z, annotation: np.ndarray, resolution: Tuple[in
     ]
 
 
-def read_detection_files(filenames, atlas):
+def read_detection_files(filenames: List[Path], atlas):
     df = pd.concat(read_detection_file(filename=filename, atlas=atlas) for filename in filenames)
-    df = df.astype({'Acronym': 'category', 'BrainRegion': 'category'})
+    df = df.astype({'Acronym': 'category', 'BrainRegion': 'category', 'Image': 'category'})
     return df

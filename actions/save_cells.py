@@ -14,17 +14,17 @@ class SaveCellsActionModel:
     def savedata(self, directory):
         print('File saving...')
         df = self.model.cells.melt(
-            id_vars=['Name', 'BrainRegion', 'Acronym', 'X', 'Y', 'Z'],
+            id_vars=['Image', 'BrainRegion', 'Acronym', 'X', 'Y', 'Z'],
             value_vars=[col for col in self.model.cells.columns if "Num Spots" in col],
             value_name='NumSpots',
             var_name='HormoneReceptor',
         )
         df = df.astype({
+            'Image': 'category',
             "HormoneReceptor": 'category',
             'BrainRegion': 'category',
             'Acronym': 'category',
             'NumSpots': 'uint16',
-            'Name': 'uint32',
             'X': 'float32',
             'Y': 'float32',
             'Z': 'float32',
