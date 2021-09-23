@@ -28,7 +28,7 @@ def read_detection_file(filename: Path, atlas: BrainGlobeAtlas) -> pd.DataFrame:
                 'name': 'BrainRegion',
                 'acronym': 'Acronym',
         })
-            .drop(columns=['id', 'BGIdx'])
+            .drop(columns=['id'])
             .assign(Image=filename.name)
     )  # .sample(10000)
 
