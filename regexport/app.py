@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from regexport.actions.load_cells import LoadCellsAction, LoadCellsModel
 from regexport.actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from regexport.actions.save_cells import SaveCellsAction, SaveCellsActionModel
+from regexport.actions.save_script import SaveGroovyScriptAction, SaveGroovyScriptActionModel
 from regexport.views.analysis_selector import AnalysisSelectorModel, AnalysisSelectorView
 from regexport.views.histogram import HistogramView, HistogramModel
 from regexport.views.main_window import MainWindow
@@ -55,6 +56,7 @@ def main():
             ),
         ],
         menu_actions=[
+            SaveGroovyScriptAction(model=SaveGroovyScriptActionModel()),
             LoadAtlasAction(model=load_atlas_action_model),
             LoadCellsAction(model=load_cells_action_model),
             SaveCellsAction(model=save_cells_action_model),
