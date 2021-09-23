@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QAction, QFileDialog
 from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Unicode, directional_link, Instance
 
-from model import AppState
-from data.load_data import read_detection_files
+from regexport.model import AppState
+from regexport.data.load_data import read_detection_files
 
 
 class LoadCellsModel(HasTraits):

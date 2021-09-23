@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from dataclasses import dataclass, field
 from functools import partial
 from pathlib import Path
 from typing import Tuple, Optional
@@ -13,9 +12,9 @@ from matplotlib.colors import ListedColormap
 from pandas import Series
 from traitlets import HasTraits, Instance, directional_link
 
-from model import AppState
-from utils.parallel import Task
-from utils.profiling import warn_if_slow
+from regexport.model import AppState
+from regexport.utils.parallel import Task
+from regexport.utils.profiling import warn_if_slow
 
 
 def is_parent(id: Series, selected_ids: Tuple[int], atlas: BrainGlobeAtlas) -> bool:

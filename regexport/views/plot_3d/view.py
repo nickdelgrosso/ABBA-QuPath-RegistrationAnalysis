@@ -7,10 +7,10 @@ from PyQt5.QtCore import QThreadPool
 from vedo import Plotter, Points, Mesh
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from utils.parallel import Task
-from utils.profiling import warn_if_slow
-from views.plot_3d import PlotterModel
-from views.utils import HasWidget
+from regexport.utils.parallel import Task
+from regexport.utils.profiling import warn_if_slow
+from regexport.views.plot_3d import PlotterModel
+from regexport.views.utils import HasWidget
 
 
 class PlotterView(HasWidget):

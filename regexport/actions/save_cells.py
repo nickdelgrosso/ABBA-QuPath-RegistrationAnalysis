@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 from PyQt5.QtWidgets import QAction, QFileDialog
 
-from model import AppState
+from regexport.model import AppState
 
 
 class SaveCellsActionModel:

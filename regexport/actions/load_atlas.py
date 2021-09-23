@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import QAction
 from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Unicode, Instance, directional_link
 
-from model import AppState
-from utils.parallel import Task
+from regexport.model import AppState
+from regexport.utils.parallel import Task
 
 
 class LoadAtlasActionModel(HasTraits):

@@ -1,10 +1,10 @@
 from typing import List
 
 from PyQt5.QtWidgets import QComboBox
-from traitlets import HasTraits, List as TList, Unicode, directional_link, UseEnum, link
+from traitlets import HasTraits, UseEnum, link
 
-from model import AppState, AnalysisType
-from views.utils import HasWidget
+from regexport.model import AppState, AnalysisType
+from regexport.views.utils import HasWidget
 
 
 class AnalysisSelectorModel(HasTraits):

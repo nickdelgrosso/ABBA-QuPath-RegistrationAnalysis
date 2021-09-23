@@ -1,14 +1,11 @@
-from typing import Optional
-
 import numpy as np
-import pandas as pd
-from traitlets import HasTraits, Instance, directional_link
+from traitlets import HasTraits, Instance
 from vedo import Plotter
 from vedo.pyplot import histogram
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from model import AppState
-from views.utils import HasWidget
+from regexport.model import AppState
+from regexport.views.utils import HasWidget
 
 
 class HistogramModel(HasTraits):

@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QComboBox
 from traitlets import HasTraits, List as TList, Unicode, directional_link
 
-from model import AppState
-from views.utils import HasWidget
+from regexport.model import AppState
+from regexport.views.utils import HasWidget
 
 
 class TextSelectorModel(HasTraits):

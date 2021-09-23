@@ -5,7 +5,7 @@ from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Instance, Tuple, directional_link
 from treelib import Tree, Node
 
-from model import AppState
+from regexport.model import AppState
 from .utils import HasWidget
 
 
