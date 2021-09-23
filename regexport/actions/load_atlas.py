@@ -10,7 +10,7 @@ from regexport.utils.parallel import Task
 
 
 class LoadAtlasActionModel(HasTraits):
-    text = Unicode("&Load Brainglobe Atlas")
+    text = Unicode("1. Load Brainglobe Atlas")
     atlas = Instance(BrainGlobeAtlas, allow_none=True)
 
     def register(self, model: AppState):

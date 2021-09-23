@@ -7,7 +7,7 @@ from regexport.model import AppState
 
 
 class SaveCellsActionModel:
-    text = "Save Cells"
+    text = "3. Save Cells"
 
     def register(self, model: AppState):
         self.model = model

@@ -48,15 +48,15 @@ def main():
             Sidebar(
                 model=sidebar_model,
                 widgets=[
-                    AnalysisSelectorView(model=analysis_selector_model),
-                    DropdownTextSelectorView(model=colormap_selector_model),
+                    # AnalysisSelectorView(model=analysis_selector_model),
+                    # DropdownTextSelectorView(model=colormap_selector_model),
                     # HistogramView(model=histogram_model),
                 ]
             ),
         ],
         menu_actions=[
-            LoadCellsAction(model=load_cells_action_model),
             LoadAtlasAction(model=load_atlas_action_model),
+            LoadCellsAction(model=load_cells_action_model),
             SaveCellsAction(model=save_cells_action_model),
         ]
     )

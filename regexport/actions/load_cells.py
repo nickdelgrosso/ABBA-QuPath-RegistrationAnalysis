@@ -11,7 +11,7 @@ from regexport.data.load_data import read_detection_files
 
 
 class LoadCellsModel(HasTraits):
-    text = Unicode("&Load TSV Files")
+    text = Unicode("2. Load TSV Files")
     atlas = Instance(BrainGlobeAtlas, allow_none=True)
     cells = Instance(pd.DataFrame, allow_none=True)
 
