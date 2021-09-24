@@ -8,7 +8,7 @@ with open('README.md') as f:
 
 setup(
     name='ABBA-QuPath-RegistrationExporter',
-    version='0.1.4',
+    version='0.1.5',
     packages=find_packages(),
     url='',
     license='MIT',

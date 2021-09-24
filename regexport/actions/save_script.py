@@ -1,21 +1,19 @@
-from pathlib import Path
 from importlib.resources import read_text
+from pathlib import Path
 
 from PyQt5.QtWidgets import QAction, QFileDialog
 
-from regexport.model import AppState
 from regexport import qupath_scripts
+
 
 class SaveGroovyScriptActionModel:
     text = "0. Get QuPath Exporter"
-
-    def register(self, model: AppState):
-        self.model = model
 
     def savedata(self, filename):
         groovy_script = read_text(qupath_scripts, 'export_registered_cells_to_tsv.groovy')
         with open(filename, 'w') as f:
             f.write(groovy_script)
+
 
 class SaveGroovyScriptAction(QAction):
 

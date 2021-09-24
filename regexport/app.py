@@ -2,6 +2,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
+from regexport.actions.download_biop_extensions import SaveBiopExtensionsAction, SaveBiopExtensionsActionModel
 from regexport.actions.load_cells import LoadCellsAction, LoadCellsModel
 from regexport.actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from regexport.actions.save_cells import SaveCellsAction, SaveCellsActionModel
@@ -56,6 +57,7 @@ def main():
             ),
         ],
         menu_actions=[
+            SaveBiopExtensionsAction(model=SaveBiopExtensionsActionModel()),
             SaveGroovyScriptAction(model=SaveGroovyScriptActionModel()),
             LoadAtlasAction(model=load_atlas_action_model),
             LoadCellsAction(model=load_cells_action_model),
