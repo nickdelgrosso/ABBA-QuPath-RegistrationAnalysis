@@ -12,7 +12,7 @@ setup(
     packages=find_packages(),
     url='',
     license='MIT',
-    author='Nicholas A. Del Grosso',
+    author='Nicholas A. Del Grosso and Estelle Nassar',
     author_email='delgrosso.nick@gmail.com',
     description='A QuPath-Abba Registration Exporter Application for Mouse Sections',
     long_description=long_description,
