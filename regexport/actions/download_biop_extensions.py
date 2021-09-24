@@ -20,6 +20,7 @@ class SaveBiopExtensionsActionModel:
             ('extensions', "https://github.com/BIOP/qupath-biop-extensions/releases/download/v2.0.8/WSI-Dependencies.zip"),
             ('.', "https://github.com/SuperElastix/elastix/releases/download/5.0.1/elastix-5.0.1-win64.zip"),
             ('.', "https://gist.githubusercontent.com/NicoKiaru/b91f9f3f0069b765a49b5d4629a8b1c7/raw/571954a443d1e1f0597022f6c19f042aefbc0f5a/TestRegister.groovy"),
+            ('.', "https://github.com/SuperElastix/elastix/releases/download/5.0.1/elastix-5.0.1-mac.zip")
         ]
         for subdir, url in urls:
             response = requests.get(url, allow_redirects=True)
