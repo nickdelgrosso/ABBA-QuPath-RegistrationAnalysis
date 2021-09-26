@@ -48,10 +48,15 @@ class PlotterModel(HasTraits):
 
     def link_cells_to_points(self, change):
         model = self.model
+        if model.cells is None:
+            self.points = PointCloud()
+            return
         worker = Task(
             self.plot_cells,
-            cells=model.cells,
-            selected_cell_ids=model.selected_cell_ids,
+            cells=model.cells[['X', 'Y', 'Z']].values * 1000,
+            colors=model.cells['Prg (Opal 520): Num Spots'],
+            # colors=model.cells.BrainRegion.cat.codes,
+            selected_cell_ids=model.selected_cell_ids if model.selected_cell_ids is not None else (),
             cmap=self.model.selected_colormap
         )
         worker.signals.finished.connect(partial(setattr, self, "points"))
@@ -60,25 +65,12 @@ class PlotterModel(HasTraits):
 
     @staticmethod
     @warn_if_slow()
-    def plot_cells(cells: Optional[pd.DataFrame], selected_cell_ids: Optional[Tuple[int]], cmap: str = 'tab20c') -> PointCloud:
-        if cells is None:
-            return PointCloud()
-        print('plotting')
-        df = cells.copy(deep=False)
-        print(df.head(), df.columns, sep='\n')
-        cell_colors = convert_values_to_colors(df.BrainRegion.cat.codes, getattr(plt.cm, cmap))
-        df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame(cell_colors)
-        if selected_cell_ids is not None:
-            df = df.iloc[selected_cell_ids]
-            if len(df) == 0:
-                return PointCloud()
-
-        points = PointCloud(
-            coords=df[['X', 'Y', 'Z']].values * 1000,
-            colors=df[['red', 'green', 'blue']].values,
-            alphas=df[['alpha']].values,
+    def plot_cells(positions: np.ndarray, colors: np.ndarray, indices: Tuple[int], cmap: str = 'tab20c') -> PointCloud:
+        return PointCloud(
+            coords=positions[indices, :],
+            colors=(selected_colors := convert_values_to_colors(colors, getattr(plt.cm, cmap))[indices])[:3],
+            alphas=selected_colors[:, 3:4],
         )
-        return points
 
 
 class PlotterView(HasWidget):
