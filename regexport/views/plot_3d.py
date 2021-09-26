@@ -1,20 +1,21 @@
 from dataclasses import dataclass, field
 from functools import partial
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from PyQt5.QtCore import QThreadPool
-from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap
 from traitlets import HasTraits, Instance, directional_link
+from vedo import Plotter, Mesh, Points
+from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from regexport.data.filters import is_parent
 from regexport.model import AppState
 from regexport.utils.parallel import Task
 from regexport.utils.profiling import warn_if_slow
+from regexport.views.utils import HasWidget
 
 
 @dataclass(frozen=True)
@@ -77,3 +78,64 @@ class PlotterModel(HasTraits):
             alphas=df[['alpha']].values,
         )
         return points
+
+
+class PlotterView(HasWidget):
+
+    def __init__(self, model: PlotterModel):
+        self.model = model
+        self.item_points = {}
+        self._atlas_mesh = None
+
+        widget = QVTKRenderWindowInteractor()
+        HasWidget.__init__(self, widget=widget)
+        self.plotter = Plotter(qtWidget=widget)
+
+        self.model.observe(self.observe_atlas_mesh, ['atlas_mesh'])
+        self.model.observe(self.render, ['points'])
+
+    @property
+    def atlas_mesh(self) -> Optional[Mesh]:
+        return self._atlas_mesh
+
+    @atlas_mesh.setter
+    def atlas_mesh(self, value: Optional[Mesh]):
+        self._atlas_mesh = value
+        self.render(None)
+
+    @staticmethod
+    def load_mesh(filename: Path) -> Mesh:
+        return Mesh(
+            str(filename),
+            alpha=0.1,
+            computeNormals=True,
+            c=(1., 1., 1.)
+        )
+
+    def observe_atlas_mesh(self, change):
+        print('saw atlas change')
+        if self.model.atlas_mesh is None:
+            self._atlas_mesh = Mesh()
+        else:
+            print('loading')
+            worker = Task(self.load_mesh, self.model.atlas_mesh)
+            worker.signals.finished.connect(partial(setattr, self, "atlas_mesh"))
+
+            pool = QThreadPool.globalInstance()
+            pool.start(worker)
+
+
+    @warn_if_slow()
+    def render(self, change):
+        actors = [self._atlas_mesh]
+        # box = self._atlas_mesh.box().wireframe().alpha(0.2).color((255, 0, 0))
+
+        # actors.append(box)
+        if len((points := self.model.points).coords) > 0:
+            coords = points.coords
+            colors = (np.hstack((points.colors, points.alphas)) * 255).astype(int)  # alphas needed for fast rendering.
+            actors.append(Points(coords, r=3, c=colors))
+
+        self.plotter.show(actors, at=0)
+        self.plotter.addInset(self._atlas_mesh, pos=(.9, .9), size=0.1, c='w', draggable=True)
+        # note: look at from vedo.applications import SlicerPlotter for inspiration

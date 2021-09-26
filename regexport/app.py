@@ -11,8 +11,7 @@ from regexport.views.analysis_selector import AnalysisSelectorModel, AnalysisSel
 from regexport.views.histogram import HistogramView, HistogramModel
 from regexport.views.main_window import MainWindow
 from regexport.model import AppState
-from regexport.views.plot_3d import PlotterModel
-from regexport.views.plot_3d.view import PlotterView
+from regexport.views.plot_3d import PlotterModel, PlotterView
 from regexport.views.region_tree import BrainRegionTree, BrainRegionTreeViewModel
 from regexport.views.sidebar import Sidebar, SidebarModel
 from regexport.views.text_selector import TextSelectorModel, DropdownTextSelectorView
