@@ -14,6 +14,7 @@ from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from regexport.model import AppState
 from regexport.utils.parallel import Task
+from regexport.utils.plotting import convert_values_to_colors
 from regexport.utils.profiling import warn_if_slow
 from regexport.views.utils import HasWidget
 
@@ -65,8 +66,8 @@ class PlotterModel(HasTraits):
         print('plotting')
         df = cells.copy(deep=False)
         print(df.head(), df.columns, sep='\n')
-        cmap: ListedColormap = getattr(plt.cm, cmap)
-        df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame(cmap((codes := df.BrainRegion.cat.codes) / codes.max())[:, :4])
+        cell_colors = convert_values_to_colors(df.BrainRegion.cat.codes, getattr(plt.cm, cmap))
+        df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame(cell_colors)
         if selected_cell_ids is not None:
             df = df.iloc[selected_cell_ids]
             if len(df) == 0:
