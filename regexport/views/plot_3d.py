@@ -4,10 +4,8 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 import numpy as np
-import pandas as pd
 from PyQt5.QtCore import QThreadPool
 from matplotlib import pyplot as plt
-from matplotlib.colors import ListedColormap
 from traitlets import HasTraits, Instance, directional_link
 from vedo import Plotter, Mesh, Points
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
@@ -43,7 +41,7 @@ class PlotterModel(HasTraits):
             lambda atlas: Path(str(atlas.structures[997]['mesh_filename'])) if atlas is not None else None
         )
         model.observe(self.link_cells_to_points, names=[
-            'selected_cell_ids', 'cells', 'selected_colormap'
+            'selected_cell_ids', 'cells', 'selected_colormap', 'column_to_plot',
         ])
 
     def link_cells_to_points(self, change):
@@ -51,12 +49,12 @@ class PlotterModel(HasTraits):
         if model.cells is None:
             self.points = PointCloud()
             return
+        color_col = model.cells[model.column_to_plot]
         worker = Task(
             self.plot_cells,
-            cells=model.cells[['X', 'Y', 'Z']].values * 1000,
-            colors=model.cells['Prg (Opal 520): Num Spots'],
-            # colors=model.cells.BrainRegion.cat.codes,
-            selected_cell_ids=model.selected_cell_ids if model.selected_cell_ids is not None else (),
+            positions=model.cells[['X', 'Y', 'Z']].values * 1000,
+            colors=color_col.cat.codes.values if color_col.dtype.name == 'category' else color_col.values,
+            indices=model.selected_cell_ids if model.selected_cell_ids is not None else (),
             cmap=self.model.selected_colormap
         )
         worker.signals.finished.connect(partial(setattr, self, "points"))
@@ -68,7 +66,7 @@ class PlotterModel(HasTraits):
     def plot_cells(positions: np.ndarray, colors: np.ndarray, indices: Tuple[int], cmap: str = 'tab20c') -> PointCloud:
         return PointCloud(
             coords=positions[indices, :],
-            colors=(selected_colors := convert_values_to_colors(colors, getattr(plt.cm, cmap))[indices])[:3],
+            colors=(selected_colors := convert_values_to_colors(colors, getattr(plt.cm, cmap))[indices])[:, :3],
             alphas=selected_colors[:, 3:4],
         )
 

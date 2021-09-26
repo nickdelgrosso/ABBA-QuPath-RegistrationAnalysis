@@ -2,15 +2,18 @@ from pathlib import Path
 
 import pandas as pd
 from PyQt5.QtWidgets import QAction, QFileDialog, QCheckBox, QDialog
+from traitlets import HasTraits, Bool, directional_link
 
 from regexport.model import AppState
 
 
-class SaveCellsActionModel:
+class SaveCellsActionModel(HasTraits):
     text = "3. Save Cells"
+    enabled = Bool(default_value=False)
 
     def register(self, model: AppState):
         self.model = model
+        directional_link((model, 'cells'), (self, 'enabled'), lambda cells: cells is not None)
 
     def savedata(self, filename: Path, selected_regions_only: bool = False):
         print('File saving...')
@@ -71,8 +74,14 @@ class SaveCellsAction(QAction):
     def __init__(self, model: SaveCellsActionModel, *args, **kwargs):
         self.model = model
         super().__init__(*args, **kwargs)
+
         self.setText(model.text)
         self.triggered.connect(self.click)
+        self.model.observe(self.set_enabled, 'enabled')
+        self.set_enabled(None)
+
+    def set_enabled(self, changed):
+        self.setEnabled(self.model.enabled)
 
     def click(self):
         # filename, filetype_filter = QFileDialog.getSaveFileName(filter="Feather file (*.feather);;CSV file (*.csv)")

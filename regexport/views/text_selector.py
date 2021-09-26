@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QComboBox
-from traitlets import HasTraits, List as TList, Unicode, directional_link
+from traitlets import HasTraits, List as TList, Unicode, directional_link, observe
 
 from regexport.model import AppState
 from regexport.views.utils import HasWidget
@@ -14,11 +14,15 @@ class TextSelectorModel(HasTraits):
             (model, options_attr),
             (self, 'options'),
         )
-        self.selected = model.selected_colormap
+        self.selected = getattr(model, selected_attr)
         directional_link(
             (self, 'selected'),
             (model, selected_attr),
         )
+
+    @observe('options')
+    def reset_selected(self, changed):
+        self.selected = self.options[0]
 
 
 class DropdownTextSelectorView(HasWidget):
@@ -27,21 +31,23 @@ class DropdownTextSelectorView(HasWidget):
         HasWidget.__init__(self, widget=self.dropdown)
 
         self.model = model
-        self.model.observe(self.update_cmap_dropdown_values, ['options'])
+        self.model.observe(self.update_dropdown_values, ['options'])
         self.model.observe(self.update_selected, ['selected'])
-        self.update_cmap_dropdown_values(None)
-        self.dropdown.currentTextChanged.connect(self.select_cmap_from_dropdown)
+        self.dropdown.currentTextChanged.connect(self.select_text_from_dropdown)
+        self.update_dropdown_values(None)
 
 
-    def update_cmap_dropdown_values(self, changed):
+    def update_dropdown_values(self, changed):
+        self.dropdown.currentTextChanged.disconnect()  # clearin
         self.dropdown.clear()
-        for cmap in self.model.options:
-            self.dropdown.addItem(cmap)
+        for option in self.model.options:
+            self.dropdown.addItem(option)
         self.dropdown.setCurrentText(self.model.selected)
+        self.dropdown.currentTextChanged.connect(self.select_text_from_dropdown)
 
     def update_selected(self, changed):
         self.dropdown.setCurrentText(self.model.selected)
 
-    def select_cmap_from_dropdown(self, text):
+    def select_text_from_dropdown(self, text):
         print('selected', text)
         self.model.selected = text

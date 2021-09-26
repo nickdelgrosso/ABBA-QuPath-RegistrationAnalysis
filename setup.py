@@ -44,7 +44,7 @@ setup(
         'pyarrow',
     ],
     entry_points={'console_scripts':[
-        "regexport=regexport.app:main"
+        "regexport=regexport.main:main"
     ]},
     package_data={
         'regexport': ['qupath_scripts/*.groovy'],
