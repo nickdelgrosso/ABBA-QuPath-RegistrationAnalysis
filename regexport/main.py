@@ -47,7 +47,7 @@ def main():
                 widgets=[
                     DropdownTextSelectorView(model=colordata_selector_model),
                     DropdownTextSelectorView(model=colormap_selector_model),
-                    # HistogramView(model=histogram_model),j
+                    HistogramView(model=histogram_model),
                 ]
             ),
         ],
