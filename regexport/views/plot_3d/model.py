@@ -9,25 +9,12 @@ from PyQt5.QtCore import QThreadPool
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap
-from pandas import Series
 from traitlets import HasTraits, Instance, directional_link
 
+from regexport.data.filters import is_parent
 from regexport.model import AppState
 from regexport.utils.parallel import Task
 from regexport.utils.profiling import warn_if_slow
-
-
-def is_parent(id: Series, selected_ids: Tuple[int], atlas: BrainGlobeAtlas) -> bool:
-    assert len(id.unique()) == 1
-    id = int(id.values[0])
-    if id != 0:
-        if id in selected_ids:
-            return True
-        else:
-            is_ancestor = atlas.hierarchy.is_ancestor
-            return any(is_ancestor(selected_id, id) for selected_id in selected_ids)
-    else:
-        return False
 
 
 @dataclass(frozen=True)
@@ -54,7 +41,7 @@ class PlotterModel(HasTraits):
             lambda atlas: Path(str(atlas.structures[997]['mesh_filename'])) if atlas is not None else None
         )
         model.observe(self.link_cells_to_points, names=[
-            'selected_region_ids', 'cells', 'selected_colormap'
+            'selected_cell_ids', 'cells', 'selected_colormap'
         ])
 
     def link_cells_to_points(self, change):
@@ -62,8 +49,7 @@ class PlotterModel(HasTraits):
         worker = Task(
             self.plot_cells,
             cells=model.cells,
-            selected_region_ids=model.selected_region_ids,
-            atlas=model.atlas,
+            selected_cell_ids=model.selected_cell_ids,
             cmap=self.model.selected_colormap
         )
         worker.signals.finished.connect(partial(setattr, self, "points"))
@@ -72,8 +58,7 @@ class PlotterModel(HasTraits):
 
     @staticmethod
     @warn_if_slow()
-    def plot_cells(cells: Optional[pd.DataFrame], selected_region_ids: Tuple[int],
-                   atlas: BrainGlobeAtlas, cmap: str = 'tab20c') -> PointCloud:
+    def plot_cells(cells: Optional[pd.DataFrame], selected_cell_ids: Optional[Tuple[int]], cmap: str = 'tab20c') -> PointCloud:
         if cells is None:
             return PointCloud()
         print('plotting')
@@ -81,13 +66,8 @@ class PlotterModel(HasTraits):
         print(df.head(), df.columns, sep='\n')
         cmap: ListedColormap = getattr(plt.cm, cmap)
         df[['red', 'green', 'blue', 'alpha']] = pd.DataFrame(cmap((codes := df.BrainRegion.cat.codes) / codes.max())[:, :4])
-        if selected_ids := selected_region_ids:
-            df['isSelected'] = (
-               df
-               .groupby('BGIdx', as_index=False)
-               .BGIdx.transform(is_parent, selected_ids=selected_ids, atlas=atlas)
-            )
-            df = df[df['isSelected']]
+        if selected_cell_ids is not None:
+            df = df.iloc[selected_cell_ids]
             if len(df) == 0:
                 return PointCloud()
 
