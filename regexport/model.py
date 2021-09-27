@@ -1,13 +1,12 @@
 from enum import Enum, auto
-from functools import cached_property, lru_cache
 
 import numpy as np
 import pandas as pd
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
-from traitlets import HasTraits, Instance, observe, Tuple, List, UseEnum, Unicode
+from traitlets import HasTraits, Instance, observe, Tuple, List, Unicode
 
-from regexport.data.filters import is_parent
+from regexport.utils.filters import is_parent
 
 
 class AnalysisType(Enum):

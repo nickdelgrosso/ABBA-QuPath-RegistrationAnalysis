@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtWidgets import QApplication
 
 from regexport.actions.download_biop_extensions import SaveBiopExtensionsAction, SaveBiopExtensionsActionModel
-from regexport.actions.load_cells import LoadCellsAction, LoadCellsModel
+from regexport.actions.load_cells import LoadCellsAction, LoadCellsActionModel
 from regexport.actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction
 from regexport.actions.save_cells import SaveCellsAction, SaveCellsActionModel
 from regexport.actions.save_script import SaveGroovyScriptAction, SaveGroovyScriptActionModel
@@ -26,7 +26,7 @@ def main():
     brain_region_tree_model.register(model=model)
     load_atlas_action_model = LoadAtlasActionModel()
     load_atlas_action_model.register(model=model)
-    load_cells_action_model = LoadCellsModel()
+    load_cells_action_model = LoadCellsActionModel()
     load_cells_action_model.register(model=model)
     save_cells_action_model = SaveCellsActionModel()
     save_cells_action_model.register(model=model)
