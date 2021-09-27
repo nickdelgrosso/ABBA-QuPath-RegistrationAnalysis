@@ -1,19 +1,13 @@
 from typing import List
 
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
-from traitlets import HasTraits
 
 from .utils import HasWidget
 
 
-class SidebarModel(HasTraits):
-    pass
-
-
 class Sidebar(HasWidget):
 
-    def __init__(self, model: SidebarModel, widgets: List[HasWidget] = []):
-        self.model = model
+    def __init__(self, widgets: List[HasWidget] = []):
 
         self._widget = QWidget()
         HasWidget.__init__(self, widget=self._widget)
