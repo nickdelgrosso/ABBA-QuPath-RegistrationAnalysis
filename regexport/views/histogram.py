@@ -37,8 +37,12 @@ class HistogramView(HasWidget):
         self.model.observe(self.render)
 
     def render(self, change):
-        bin_edges = np.histogram_bin_edges(self.model.data, bins='fd')
+        data = self.model.data
+        if len(data) == 0:
+            self.plotter.clear()
+            return
+        bin_edges = np.histogram_bin_edges(data, bins='fd')
         print('bin edges:', bin_edges)
-        hist = histogram(self.model.data, bins=len(bin_edges), gap=0., title=self.model.title, )
+        hist = histogram(data, bins=len(bin_edges), gap=0., title=self.model.title, )
         self.plotter.clear()
         self.plotter.show(hist, mode=12)
