@@ -23,3 +23,9 @@ pip install --upgrade ABBA-QuPath-RegistrationExporter
 ```
 regexport
 ```
+
+## Running Tests
+
+```
+python -m pytest
+```

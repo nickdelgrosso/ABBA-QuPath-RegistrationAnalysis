@@ -43,6 +43,13 @@ setup(
         'bg-atlasapi',
         'pyarrow',
     ],
+    setup_requires=[
+        'pytest_runner',
+    ],
+    tests_require=[
+        'pytest',
+        'pytest-bdd',
+    ],
     entry_points={'console_scripts':[
         "regexport=regexport.main:main"
     ]},

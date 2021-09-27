@@ -16,11 +16,9 @@ class LoadAtlasActionModel(HasTraits):
     def register(self, model: AppState):
         directional_link((self, "atlas"), target=(model, "atlas"))
 
-    def run(self):
-        task = Task(BrainGlobeAtlas, "allen_mouse_25um")
-        task.signals.finished.connect(partial(setattr, self, 'atlas'))
-        pool = QThreadPool.globalInstance()
-        pool.start(task)
+    def click(self):
+        atlas = BrainGlobeAtlas("allen_mouse_25um")
+        self.atlas = atlas
 
 
 class LoadAtlasAction(QAction):
@@ -29,4 +27,10 @@ class LoadAtlasAction(QAction):
         self.model = model
         super().__init__(*args, **kwargs)
         self.setText(self.model.text)
-        self.triggered.connect(self.model.run)
+        self.triggered.connect(self.model.click)
+
+    def on_run(self):
+        task = Task(self.model.click)
+        pool = QThreadPool.globalInstance()
+        pool.start(task)
+

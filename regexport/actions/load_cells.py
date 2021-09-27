@@ -4,13 +4,13 @@ from typing import List
 import pandas as pd
 from PyQt5.QtWidgets import QAction, QFileDialog
 from bg_atlasapi import BrainGlobeAtlas
-from traitlets import HasTraits, Unicode, directional_link, Instance, Bool, observe
+from traitlets import HasTraits, Unicode, directional_link, Instance, Bool
 
 from regexport.model import AppState
-from regexport.data.load_data import read_detection_files
+from regexport.utils.load_data import read_detection_files
 
 
-class LoadCellsModel(HasTraits):
+class LoadCellsActionModel(HasTraits):
     text = Unicode("2. Load TSV Files")
     atlas = Instance(BrainGlobeAtlas, allow_none=True)
     cells = Instance(pd.DataFrame, allow_none=True)
@@ -21,7 +21,7 @@ class LoadCellsModel(HasTraits):
         directional_link((self, 'cells'), (model, 'cells'))
         directional_link((model, 'atlas'), (self, 'enabled'), lambda atlas: atlas is not None)
 
-    def load_files(self, filenames: List[Path]):
+    def submit(self, filenames: List[Path]):
         if not filenames:
             return
         if self.atlas is None:
@@ -32,7 +32,7 @@ class LoadCellsModel(HasTraits):
 
 class LoadCellsAction(QAction):
 
-    def __init__(self, model: LoadCellsModel, *args, **kwargs):
+    def __init__(self, model: LoadCellsActionModel, *args, **kwargs):
         self.model = model
         super().__init__(*args, **kwargs)
         self.setText(self.model.text)
@@ -52,5 +52,5 @@ class LoadCellsAction(QAction):
         )
 
         filenames = [Path(f) for f in filenames]
-        self.model.load_files(filenames=filenames)
+        self.model.submit(filenames=filenames)
 

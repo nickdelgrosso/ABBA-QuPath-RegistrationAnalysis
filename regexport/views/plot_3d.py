@@ -1,32 +1,18 @@
-from dataclasses import dataclass, field
 from functools import partial
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional
 
 import numpy as np
 from PyQt5.QtCore import QThreadPool
-from matplotlib import pyplot as plt
 from traitlets import HasTraits, Instance, directional_link
 from vedo import Plotter, Mesh, Points
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
+from regexport.utils.plotting import plot_cells, PointCloud
 from regexport.model import AppState
 from regexport.utils.parallel import Task
-from regexport.utils.plotting import convert_values_to_colors
 from regexport.utils.profiling import warn_if_slow
 from regexport.views.utils import HasWidget
-
-
-@dataclass(frozen=True)
-class PointCloud:
-    coords: np.ndarray = field(default=np.empty((0, 3), dtype=float))
-    colors: np.ndarray = field(default=np.empty((0, 3), dtype=float))
-    alphas: np.ndarray = field(default=np.empty((0, 1), dtype=float))
-
-    def __post_init__(self):
-        assert self.coords.ndim == 2 and self.coords.shape[1] == 3
-        assert self.colors.ndim == 2 and self.colors.shape[1] == 3
-        assert self.alphas.ndim == 2 and self.alphas.shape[1] == 1
 
 
 class PlotterModel(HasTraits):
@@ -50,25 +36,13 @@ class PlotterModel(HasTraits):
             self.points = PointCloud()
             return
         color_col = model.cells[model.column_to_plot]
-        worker = Task(
-            self.plot_cells,
+        points = plot_cells(
             positions=model.cells[['X', 'Y', 'Z']].values * 1000,
             colors=color_col.cat.codes.values if color_col.dtype.name == 'category' else color_col.values,
             indices=model.selected_cell_ids if model.selected_cell_ids is not None else (),
             cmap=self.model.selected_colormap
         )
-        worker.signals.finished.connect(partial(setattr, self, "points"))
-        pool = QThreadPool.globalInstance()
-        pool.start(worker)
-
-    @staticmethod
-    @warn_if_slow()
-    def plot_cells(positions: np.ndarray, colors: np.ndarray, indices: Tuple[int], cmap: str = 'tab20c') -> PointCloud:
-        return PointCloud(
-            coords=positions[indices, :],
-            colors=(selected_colors := convert_values_to_colors(colors, getattr(plt.cm, cmap))[indices])[:, :3],
-            alphas=selected_colors[:, 3:4],
-        )
+        self.points = points
 
 
 class PlotterView(HasWidget):
