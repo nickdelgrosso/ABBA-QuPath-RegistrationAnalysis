@@ -15,7 +15,7 @@ class SaveCellsActionModel(HasTraits):
         self.model = model
         directional_link((model, 'cells'), (self, 'enabled'), lambda cells: cells is not None)
 
-    def savedata(self, filename: Path, selected_regions_only: bool = False):
+    def submit(self, filename: Path, selected_regions_only: bool = False):
         print('File saving...')
 
         types = {
@@ -87,7 +87,7 @@ class SaveCellsAction(QAction):
         # filename, filetype_filter = QFileDialog.getSaveFileName(filter="Feather file (*.feather);;CSV file (*.csv)")
         dialog = ChkBxFileDialog()
         if dialog.exec_() == QDialog.Accepted:
-            self.model.savedata(
+            self.model.submit(
                 filename=dialog.full_filename,
                 selected_regions_only=dialog.selected_regions_only
             )
