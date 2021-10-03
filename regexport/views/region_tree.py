@@ -1,11 +1,9 @@
-from typing import Optional
-
 from PyQt5.QtWidgets import QTreeWidget, QAbstractItemView, QTreeWidgetItem
-from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Instance, Tuple, directional_link
-from treelib import Tree, Node
+from treelib import Tree
 
 from regexport.model import AppState
+from regexport.utils.atlas import create_brain_region_tree
 from .utils import HasWidget
 
 
@@ -15,19 +13,7 @@ class BrainRegionTreeViewModel(HasTraits):
 
     def register(self, model: AppState):
         directional_link((self, 'selected_region_ids'), (model, 'selected_region_ids'))
-        directional_link((model, 'atlas'), (self, 'tree'), self.update_tree)
-
-    @staticmethod
-    def update_tree(atlas: Optional[BrainGlobeAtlas]) -> Tree:
-        if atlas is None:
-            return Tree()
-
-        new_tree = Tree()
-        for id in (tree := atlas.hierarchy).expand_tree(mode=Tree.DEPTH):
-            region_name = atlas._get_from_structure(id, "name")
-            node = Node(identifier=id, data=region_name)
-            new_tree.add_node(node, parent=tree.parent(id))
-        return new_tree
+        directional_link((model, 'atlas'), (self, 'tree'), create_brain_region_tree)
 
     def select(self, *brain_region_ids: int):
         print(brain_region_ids)
