@@ -2,6 +2,7 @@ from dataclasses import dataclass, field, fields, Field
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from pytest import fixture
 from pytest_bdd import when, then, given, scenario, parsers
 from pytest_bdd.parsers import parse
@@ -30,6 +31,11 @@ def test_data_is_exported():
 
 @scenario('../filter_data.feature', 'Filter Cells by single Brain Region')
 def test_filter_plot_by_brain_region():
+    pass
+
+
+@scenario('../filter_data.feature', 'Export Brain-Region Filtered Cells')
+def test_exported_data_is_filtered_by_brain_region():
     pass
 
 
@@ -82,6 +88,10 @@ def step_impl(tmp_path, filename: Path):
     parse("the user selects the {brain_region} brain region"),
     converters={'brain_region': lambda s: 88},
 )
+@given(
+    parse("the user has only selected the {brain_region} brain region"),
+    converters={'brain_region': lambda s: 88},
+)
 def step_impl(app: App, brain_region: int):
     app.brain_region_tree.select(brain_region)
 
@@ -93,3 +103,31 @@ def step_impl(app: App, brain_region: int):
 def step_impl(app: App, brain_region: int):
     assert len(np.unique(app.plot_window.points.colors, axis=0)) == 1
 
+
+
+def step_impl():
+    raise NotImplementedError(u'STEP: And the user has only selected the Anterior hypothalamic nucleus brain region')
+
+
+@when(
+    parse("the user exports the data to {filename} with brain region filtering set to {is_brain_region_filter}"),
+    converters={
+        'filename': Path,
+        'is_brain_region_filter': lambda s: {'on': True, 'off': False},
+    }
+)
+def step_impl(app: App, tmp_path, filename: Path, is_brain_region_filter: bool):
+    full_filename = tmp_path / filename
+    app.export_data_button.submit(filename=full_filename, selected_regions_only=is_brain_region_filter)
+
+
+@then(
+    parse("the {filename} file only contains cells from the {brain_region} brain region"),
+    converters={'filename': Path},
+)
+def step_impl(tmp_path, filename, brain_region):
+    full_filename = tmp_path / filename
+    df = pd.read_csv(full_filename)
+    brain_regions_in_file = df.BrainRegion.unique()
+    assert len(brain_regions_in_file) == 1
+    assert brain_regions_in_file[0] == brain_region
