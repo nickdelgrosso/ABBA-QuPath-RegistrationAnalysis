@@ -4,8 +4,8 @@ Feature: Filter Registered Data
 
   Scenario: Filter Cells by single Brain Region
     Given the user has loaded the Allen Mouse Atlas
-    And the user has loaded registered cell data from QuPath
-    When the user selects the MPO brain region
-    Then only cells from the MPO brain region are shown
+    And the user has loaded a TSV file exported from QuPath
+    When the user selects the Anterior hypothalamic nucleus brain region
+    Then only cells from the Anterior hypothalamic nucleus brain region are shown
 
     
