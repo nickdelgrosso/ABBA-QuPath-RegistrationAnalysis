@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field, fields, Field
 from pathlib import Path
 
+import numpy as np
 from pytest import fixture
 from pytest_bdd import when, then, given, scenario, parsers
+from pytest_bdd.parsers import parse
 
 from regexport.actions.load_atlas import LoadAtlasActionModel
 from regexport.actions.load_cells import LoadCellsActionModel
@@ -16,19 +18,18 @@ def app() -> App:
     return App()
 
 
-@scenario(
-    '../view_registered_cell_data.feature',
-    'Loading Data from TSV',
-)
+@scenario('../view_registered_cell_data.feature', 'Loading Data from TSV')
 def test_data_shows_up_on_load():
     pass
 
 
-@scenario(
-    '../export_registered_data.feature',
-    'Save Merged CSV',
-)
+@scenario('../export_registered_data.feature', 'Save Merged CSV')
 def test_data_is_exported():
+    pass
+
+
+@scenario('../filter_data.feature', 'Filter Cells by single Brain Region')
+def test_filter_plot_by_brain_region():
     pass
 
 
@@ -60,7 +61,7 @@ def step_impl(app: App):
 
 
 @when(
-    parsers.parse("the user exports the data to file {filename}"),
+    parse("the user exports the data to file {filename}"),
     converters={"filename": Path},
 )
 def step_impl(app: App, tmp_path, filename: Path):
@@ -69,9 +70,26 @@ def step_impl(app: App, tmp_path, filename: Path):
 
 
 @then(
-    parsers.parse("the {filename} file is saved on the computer"),
+    parse("the {filename} file is saved on the computer"),
     converters={"filename": Path},
 )
 def step_impl(tmp_path, filename: Path):
     full_path = tmp_path / filename
     assert full_path.exists()
+
+
+@when(
+    parse("the user selects the {brain_region} brain region"),
+    converters={'brain_region': lambda s: 88},
+)
+def step_impl(app: App, brain_region: int):
+    app.brain_region_tree.select(brain_region)
+
+
+@then(
+    parse("only cells from the {brain_region} brain region are shown"),
+    converters={'brain_region': lambda s: 88},
+)
+def step_impl(app: App, brain_region: int):
+    assert len(np.unique(app.plot_window.points.colors, axis=0)) == 1
+

@@ -23,8 +23,8 @@ class App:
         self.plot_window = PlotterModel()
         self.plot_window.register(model=self.model)
 
-        self.brain_region_tree_model = BrainRegionTreeViewModel()
-        self.brain_region_tree_model.register(model=self.model)
+        self.brain_region_tree = BrainRegionTreeViewModel()
+        self.brain_region_tree.register(model=self.model)
 
         self.load_atlas_button = LoadAtlasActionModel()
         self.load_atlas_button.register(model=self.model)
@@ -52,7 +52,7 @@ class App:
     def create_gui(self) -> QMainWindow:
         return MainWindow(
             main_widgets=[
-                BrainRegionTree(model=self.brain_region_tree_model),
+                BrainRegionTree(model=self.brain_region_tree),
                 PlotterView(model=self.plot_window),
                 Sidebar(
                     widgets=[

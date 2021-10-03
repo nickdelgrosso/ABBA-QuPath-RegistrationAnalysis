@@ -29,6 +29,10 @@ class BrainRegionTreeViewModel(HasTraits):
             new_tree.add_node(node, parent=tree.parent(id))
         return new_tree
 
+    def select(self, *brain_region_ids: int):
+        print(brain_region_ids)
+        self.selected_region_ids = brain_region_ids
+
 
 class BrainRegionTree(HasWidget):
 
@@ -66,8 +70,8 @@ class BrainRegionTree(HasWidget):
                 parent.item.addChild(node.item)
 
         # Finish up
-        self.treeview.expandToDepth(2)
+        self.treeview.expandToDepth(1)
 
     def onSelectionChanged(self):
-        self.model.selected_region_ids = tuple(int(item.text(1)) for item in self.treeview.selectedItems())
+        self.model.select(*[int(item.text(1)) for item in self.treeview.selectedItems()])
 
