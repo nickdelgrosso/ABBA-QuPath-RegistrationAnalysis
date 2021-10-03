@@ -45,7 +45,7 @@ class AppState(HasTraits):
             self.selected_cell_ids = self.cells.index.values
         else:
             is_parented = self.cells.groupby('BGIdx', as_index=False).BGIdx.transform(
-                is_parent, selected_ids=self.selected_region_ids, tree=self.atlas.hierarchy
+                lambda ids: is_parent(ids.values[0], selected_ids=self.selected_region_ids, tree=self.atlas.hierarchy) if ids.values[0] != 0 else False
             )
             only_parented = is_parented[is_parented.BGIdx].index.values
             self.selected_cell_ids = only_parented
