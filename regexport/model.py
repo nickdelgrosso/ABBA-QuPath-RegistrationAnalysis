@@ -49,6 +49,3 @@ class AppState(HasTraits):
             )
             only_parented = is_parented[is_parented.BGIdx].index.values
             self.selected_cell_ids = only_parented
-
-
-
