@@ -20,17 +20,17 @@ class App:
     def __init__(self):
         self.model = AppState()
 
-        self.plotter_model = PlotterModel()
-        self.plotter_model.register(model=self.model)
+        self.plot_window = PlotterModel()
+        self.plot_window.register(model=self.model)
 
         self.brain_region_tree_model = BrainRegionTreeViewModel()
         self.brain_region_tree_model.register(model=self.model)
 
-        self.load_atlas_action_model = LoadAtlasActionModel()
-        self.load_atlas_action_model.register(model=self.model)
+        self.load_atlas_button = LoadAtlasActionModel()
+        self.load_atlas_button.register(model=self.model)
 
-        self.load_cells_action_model = LoadCellsActionModel()
-        self.load_cells_action_model.register(model=self.model)
+        self.load_cells_button = LoadCellsActionModel()
+        self.load_cells_button.register(model=self.model)
 
         self.save_cells_action_model = SaveCellsActionModel()
         self.save_cells_action_model.register(model=self.model)
@@ -53,7 +53,7 @@ class App:
         return MainWindow(
             main_widgets=[
                 BrainRegionTree(model=self.brain_region_tree_model),
-                PlotterView(model=self.plotter_model),
+                PlotterView(model=self.plot_window),
                 Sidebar(
                     widgets=[
                         DropdownTextSelectorView(model=self.colordata_selector_model),
@@ -65,8 +65,8 @@ class App:
             menu_actions=[
                 SaveBiopExtensionsAction(model=self.save_biop_extensions_button),
                 SaveGroovyScriptAction(model=self.save_groovy_script_button),
-                LoadAtlasAction(model=self.load_atlas_action_model),
-                LoadCellsAction(model=self.load_cells_action_model),
+                LoadAtlasAction(model=self.load_atlas_button),
+                LoadCellsAction(model=self.load_cells_button),
                 SaveCellsAction(model=self.save_cells_action_model),
             ]
         )
