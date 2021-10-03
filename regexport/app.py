@@ -32,8 +32,8 @@ class App:
         self.load_cells_button = LoadCellsActionModel()
         self.load_cells_button.register(model=self.model)
 
-        self.save_cells_action_model = SaveCellsActionModel()
-        self.save_cells_action_model.register(model=self.model)
+        self.export_data_button = SaveCellsActionModel()
+        self.export_data_button.register(model=self.model)
 
         self.colormap_selector_model = TextSelectorModel()
         self.colormap_selector_model.register(model=self.model, options_attr='colormap_options',
@@ -67,7 +67,7 @@ class App:
                 SaveGroovyScriptAction(model=self.save_groovy_script_button),
                 LoadAtlasAction(model=self.load_atlas_button),
                 LoadCellsAction(model=self.load_cells_button),
-                SaveCellsAction(model=self.save_cells_action_model),
+                SaveCellsAction(model=self.export_data_button),
             ]
         )
 
