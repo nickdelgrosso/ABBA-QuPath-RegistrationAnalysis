@@ -43,13 +43,13 @@ setup(
         'bg-atlasapi',
         'pyarrow',
     ],
-    setup_requires=[
-        'pytest_runner',
-    ],
-    tests_require=[
-        'pytest',
-        'pytest-bdd',
-    ],
+    extras_require={
+        'dev': [ # to include as dev, try pip install -e .[dev]
+            'pytest_runner',
+            'pytest',
+            'pytest-bdd',
+            ],
+    },
     entry_points={'console_scripts':[
         "regexport=regexport.main:main"
     ]},
