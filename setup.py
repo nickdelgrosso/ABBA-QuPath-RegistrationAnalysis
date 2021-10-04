@@ -49,6 +49,7 @@ setup(
             'pytest',
             'pytest-bdd',
             'coverage',
+            'pytest-qt',
             ],
     },
     entry_points={'console_scripts':[

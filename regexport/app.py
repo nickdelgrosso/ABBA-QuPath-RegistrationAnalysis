@@ -11,7 +11,7 @@ from regexport.model import AppState
 from regexport.views.histogram import HistogramModel, HistogramView
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
-from regexport.views.region_tree import BrainRegionTreeViewModel, BrainRegionTree
+from regexport.views.region_tree import BrainRegionTreeModel, BrainRegionTree
 from regexport.views.sidebar import Sidebar
 from regexport.views.text_selector import TextSelectorModel, DropdownTextSelectorView
 
@@ -23,7 +23,7 @@ class App:
         self.plot_window = PlotterModel()
         self.plot_window.register(model=self.model)
 
-        self.brain_region_tree = BrainRegionTreeViewModel()
+        self.brain_region_tree = BrainRegionTreeModel()
         self.brain_region_tree.register(model=self.model)
 
         self.load_atlas_button = LoadAtlasActionModel()

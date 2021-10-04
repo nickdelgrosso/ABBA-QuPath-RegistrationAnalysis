@@ -7,7 +7,7 @@ from regexport.utils.atlas import create_brain_region_tree
 from .utils import HasWidget
 
 
-class BrainRegionTreeViewModel(HasTraits):
+class BrainRegionTreeModel(HasTraits):
     tree = Instance(Tree, allow_none=False, default_value=Tree())
     selected_region_ids = Tuple(default_value=())  # Tuple of ints
 
@@ -22,7 +22,7 @@ class BrainRegionTreeViewModel(HasTraits):
 
 class BrainRegionTree(HasWidget):
 
-    def __init__(self, model: BrainRegionTreeViewModel):
+    def __init__(self, model: BrainRegionTreeModel):
         self.model = model
 
         treeview = QTreeWidget()
@@ -35,12 +35,15 @@ class BrainRegionTree(HasWidget):
 
         self.treeview = treeview
 
-        self.model.observe(self.on_change_tree, names=['tree'])
+        self.model.observe(self.render, names=['tree'])
 
-    def on_change_tree(self, change):
+    def render(self, change=None):
+        tree = self.model.tree
 
-        if (tree := change['new']) is None:
+        # no need to render empty tree
+        if len(tree) == 0:
             return
+
         ids = tree.expand_tree(mode=Tree.DEPTH)
         next(ids)  # skip displaying root
 

@@ -36,7 +36,7 @@ class HistogramView(HasWidget):
         self.model = model
         self.model.observe(self.render)
 
-    def render(self, change):
+    def render(self, change=None):
         data = self.model.data
         if len(data) == 0:
             self.plotter.clear()

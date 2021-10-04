@@ -31,13 +31,12 @@ class DropdownTextSelectorView(HasWidget):
         HasWidget.__init__(self, widget=self.dropdown)
 
         self.model = model
-        self.model.observe(self.update_dropdown_values, ['options'])
+        self.model.observe(self.render, ['options'])
         self.model.observe(self.update_selected, ['selected'])
         self.dropdown.currentTextChanged.connect(self.select_text_from_dropdown)
-        self.update_dropdown_values(None)
+        self.render(None)
 
-
-    def update_dropdown_values(self, changed):
+    def render(self, changed=None):
         self.dropdown.currentTextChanged.disconnect()  # clearin
         self.dropdown.clear()
         for option in self.model.options:

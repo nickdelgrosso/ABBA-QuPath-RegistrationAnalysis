@@ -91,7 +91,7 @@ class PlotterView(HasWidget):
 
 
     @warn_if_slow()
-    def render(self, change):
+    def render(self, change=None):
         actors = [self._atlas_mesh]
         # box = self._atlas_mesh.box().wireframe().alpha(0.2).color((255, 0, 0))
 
