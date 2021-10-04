@@ -1,5 +1,10 @@
 # ABBA-QuPath Registration Exporter
 
+[![Python application](https://github.com/nickdelgrosso/ABBA-QuPath-RegistrationAnalysis/actions/workflows/python-app.yml/badge.svg)](https://github.com/nickdelgrosso/ABBA-QuPath-RegistrationAnalysis/actions/workflows/python-app.yml)
+
+
+
+
 A Python app and Groovy script that helps export transformed cell detections
 from ABBA-registered data stored in QuPath projects.
 
