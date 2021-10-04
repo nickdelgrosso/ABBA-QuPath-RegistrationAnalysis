@@ -23,9 +23,9 @@ jobs:
     - name: Install dependencies
       run: |
         pip install .[dev]
-    - name: Test with pytest
+    - name: Test with pytest, tracking coverage
       run: |
-        pytest
+        coverage run --source regexport -m pytest
     - name: Coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

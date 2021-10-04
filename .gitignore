@@ -7,3 +7,4 @@ dist
 *.pyc
 *.egg-info
 .eggs
+htmlcov
