@@ -99,10 +99,6 @@ def step_impl(app: App, brain_region: int):
     assert len(np.unique(app.plot_window.points.colors, axis=0)) == 1
 
 
-def step_impl():
-    raise NotImplementedError(u'STEP: And the user has only selected the Anterior hypothalamic nucleus brain region')
-
-
 @when(
     parse("the user exports the data to {filename} with brain region filtering set to {is_brain_region_filter}"),
     converters={
