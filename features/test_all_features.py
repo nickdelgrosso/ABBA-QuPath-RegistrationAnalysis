@@ -19,22 +19,22 @@ def app() -> App:
     return App()
 
 
-@scenario('../view_registered_cell_data.feature', 'Loading Data from TSV')
+@scenario('view_registered_cell_data.feature', 'Loading Data from TSV')
 def test_data_shows_up_on_load():
     pass
 
 
-@scenario('../export_registered_data.feature', 'Save Merged CSV')
+@scenario('export_registered_data.feature', 'Save Merged CSV')
 def test_data_is_exported():
     pass
 
 
-@scenario('../filter_data.feature', 'Filter Cells by single Brain Region')
+@scenario('filter_data.feature', 'Filter Cells by single Brain Region')
 def test_filter_plot_by_brain_region():
     pass
 
 
-@scenario('../filter_data.feature', 'Export Brain-Region Filtered Cells')
+@scenario('filter_data.feature', 'Export Brain-Region Filtered Cells')
 def test_exported_data_is_filtered_by_brain_region():
     pass
 

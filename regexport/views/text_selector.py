@@ -6,7 +6,7 @@ from regexport.views.utils import HasWidget
 
 
 class TextSelectorModel(HasTraits):
-    options = TList(Unicode, default_value=["Unknown", "Unknown2"])
+    options = TList(Unicode(), default_value=["Unknown", "Unknown2"])
     selected = Unicode(default_value="Unknown")
 
     def register(self, model: AppState, options_attr: str, selected_attr: str):
