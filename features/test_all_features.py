@@ -1,17 +1,12 @@
-from dataclasses import dataclass, field, fields, Field
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from pytest import fixture
-from pytest_bdd import when, then, given, scenario, parsers
+from pytest_bdd import when, then, given, scenario
 from pytest_bdd.parsers import parse
 
-from regexport.actions.load_atlas import LoadAtlasActionModel
-from regexport.actions.load_cells import LoadCellsActionModel
 from regexport.app import App
-from regexport.model import AppState
-from regexport.views.plot_3d import PlotterModel
 
 
 @fixture()
@@ -102,7 +97,6 @@ def step_impl(app: App, brain_region: int):
 )
 def step_impl(app: App, brain_region: int):
     assert len(np.unique(app.plot_window.points.colors, axis=0)) == 1
-
 
 
 def step_impl():
