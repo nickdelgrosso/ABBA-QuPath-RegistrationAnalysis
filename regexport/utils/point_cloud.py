@@ -1,11 +1,10 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap
-
-from regexport.utils.profiling import warn_if_slow
 
 
 @dataclass(frozen=True)
@@ -20,13 +19,13 @@ class PointCloud:
         assert self.alphas.ndim == 2 and self.alphas.shape[1] == 1
 
 
-@warn_if_slow()
-def plot_cells(positions: np.ndarray, colors: np.ndarray, cmap: str = 'tab20c') -> PointCloud:
-    return PointCloud(
-        coords=positions,
-        colors=(selected_colors := convert_values_to_colors(colors, getattr(plt.cm, cmap)))[:, :3],
-        alphas=selected_colors[:, 3:4],
-    )
+    @classmethod
+    def from_cmap(cls, positions: np.ndarray, color_levels: np.ndarray, cmap: str = 'tab20c') -> PointCloud:
+        return cls(
+            coords=positions,
+            colors=(selected_colors := convert_values_to_colors(color_levels, getattr(plt.cm, cmap)))[:, :3],
+            alphas=selected_colors[:, 3:4],
+        )
 
 
 def convert_values_to_colors(color_codes: np.ndarray, cmap: ListedColormap):

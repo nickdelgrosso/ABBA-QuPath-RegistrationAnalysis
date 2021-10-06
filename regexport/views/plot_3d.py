@@ -8,7 +8,7 @@ from traitlets import HasTraits, Instance, directional_link
 from vedo import Plotter, Mesh, Points
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from regexport.utils.plotting import plot_cells, PointCloud
+from regexport.utils.point_cloud import PointCloud
 from regexport.model import AppState
 from regexport.utils.parallel import Task
 from regexport.utils.profiling import warn_if_slow
@@ -36,9 +36,9 @@ class PlotterModel(HasTraits):
             self.points = PointCloud()
             return
         color_col = model.selected_cells[model.column_to_plot]
-        points = plot_cells(
+        points = PointCloud.from_cmap(
             positions=model.selected_cells[['X', 'Y', 'Z']].values * 1000,
-            colors=color_col.cat.codes.values if color_col.dtype.name == 'category' else color_col.values,
+            color_levels=color_col.cat.codes.values if color_col.dtype.name == 'category' else color_col.values,
             cmap=self.model.selected_colormap
         )
         self.points = points
