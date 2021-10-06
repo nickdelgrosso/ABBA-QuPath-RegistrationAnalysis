@@ -16,23 +16,27 @@ def app() -> App:
 
 @scenario('all.feature', 'Loading Data from TSV')
 def test_data_shows_up_on_load():
-    pass
+    ...
 
 
 @scenario('all.feature', 'Save Merged CSV')
 def test_data_is_exported():
-    pass
+    ...
 
 
 @scenario('all.feature', 'Filter Cells by single Brain Region')
 def test_filter_plot_by_brain_region():
-    pass
+    ...
 
 
 @scenario('all.feature', 'Export Brain-Region Filtered Cells')
 def test_exported_data_is_filtered_by_brain_region():
-    pass
+    ...
 
+
+@scenario('all.feature', 'Export Qupath Cell-Registration Groovy Script')
+def test_groovy_file_is_exported():
+    ...
 
 @given("the user has loaded the Allen Mouse Atlas")
 def step_impl(app: App):
@@ -121,3 +125,11 @@ def step_impl(tmp_path, filename, brain_region):
     brain_regions_in_file = df.BrainRegion.unique()
     assert len(brain_regions_in_file) == 1
     assert brain_regions_in_file[0] == brain_region
+
+
+@when(
+    parse("the user requests the QuPath TSV cell export script to file {filename}"),
+    converters={'filename': Path},
+)
+def step_impl(app: App, tmp_path, filename: Path):
+    app.save_groovy_script_button.submit(tmp_path / filename)

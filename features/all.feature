@@ -26,3 +26,7 @@ Feature: All Features
     And the user has loaded a TSV file exported from QuPath
     When the user exports the data to file export.csv
     Then the export.csv file is saved on the computer
+
+  Scenario: Export Qupath Cell-Registration Groovy Script
+    When the user requests the QuPath TSV cell export script to file script.groovy
+    Then the script.groovy file is saved on the computer

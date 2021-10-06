@@ -9,7 +9,7 @@ from regexport import qupath_scripts
 class SaveGroovyScriptActionModel:
     text = "0. Get QuPath Exporter"
 
-    def savedata(self, filename):
+    def submit(self, filename):
         groovy_script = read_text(qupath_scripts, 'export_registered_cells_to_tsv.groovy')
         with open(filename, 'w') as f:
             f.write(groovy_script)
@@ -33,4 +33,4 @@ class SaveGroovyScriptAction(QAction):
         if not filename:
             return
 
-        self.model.savedata(Path(filename))
+        self.model.submit(Path(filename))
