@@ -19,17 +19,17 @@ def test_data_shows_up_on_load():
     ...
 
 
-@scenario('all.feature', 'Save Merged CSV')
+@scenario('processing.feature', 'Save Merged CSV')
 def test_data_is_exported():
     ...
 
 
-@scenario('all.feature', 'Filter Cells by single Brain Region')
+@scenario('processing.feature', 'Filter Cells by single Brain Region')
 def test_filter_plot_by_brain_region():
     ...
 
 
-@scenario('all.feature', 'Export Brain-Region Filtered Cells')
+@scenario('processing.feature', 'Export Brain-Region Filtered Cells')
 def test_exported_data_is_filtered_by_brain_region():
     ...
 
