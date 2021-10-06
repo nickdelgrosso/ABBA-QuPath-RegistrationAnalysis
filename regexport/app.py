@@ -53,23 +53,23 @@ class App:
     def create_gui(self) -> QMainWindow:
         show_dialog_box_on_uncaught_exception()
         return MainWindow(
-            main_widgets=[
+            main_widgets=(
                 BrainRegionTree(model=self.brain_region_tree),
                 PlotterView(model=self.plot_window),
                 Sidebar(
-                    widgets=[
+                    widgets=(
                         DropdownTextSelectorView(model=self.colordata_selector_model),
                         DropdownTextSelectorView(model=self.colormap_selector_model),
                         HistogramView(model=self.histogram_model),
-                    ]
+                    )
                 ),
-            ],
-            menu_actions=[
+            ),
+            menu_actions=(
                 SaveBiopExtensionsAction(model=self.save_biop_extensions_button),
                 SaveGroovyScriptAction(model=self.save_groovy_script_button),
                 LoadAtlasAction(model=self.load_atlas_button),
                 LoadCellsAction(model=self.load_cells_button),
                 SaveCellsAction(model=self.export_data_button),
-            ]
+            )
         )
 
