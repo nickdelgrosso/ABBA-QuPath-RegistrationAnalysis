@@ -19,6 +19,7 @@ jobs:
     - name: Install Platform Dependencies
       run: |
         sudo apt install -y xvfb x11-utils libxkbcommon-x11-0 # https://stackoverflow.com/questions/60692711/cant-create-python-qapplication-in-github-action
+        sudo apt install -y libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0  # https://stackoverflow.com/a/60694208
         export DISPLAY=:99.0
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
@@ -28,6 +29,8 @@ jobs:
       run: |
         pip install .[dev]
     - name: Test with pytest, tracking coverage
+      env:
+        QT_DEBUG_PLUGINS: 1
       run: |
         xvfb-run coverage run --source regexport -m pytest
     - name: Coveralls
