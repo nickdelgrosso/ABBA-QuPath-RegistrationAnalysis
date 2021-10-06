@@ -10,6 +10,10 @@ Feature: Data Processing
     When the user selects the Anterior hypothalamic nucleus brain region
     Then only cells from the Anterior hypothalamic nucleus brain region are shown
 
+  Scenario: Filter Cells by Number of Spots in a Specific Channel
+    When the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50
+    Then only cells that have up to 50 spots in the Esr1 (Opal 480) channel are shown
+
   Scenario: Export Brain-Region Filtered Cells
     Given the user has only selected the Anterior hypothalamic nucleus brain region
     When the user exports the data to example.csv with brain region filtering set to on

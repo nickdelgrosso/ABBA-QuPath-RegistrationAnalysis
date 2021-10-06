@@ -3,40 +3,18 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from pytest import fixture
-from pytest_bdd import when, then, given, scenario
+from pytest_bdd import when, then, given, scenarios
 from pytest_bdd.parsers import parse
 
 from regexport.app import App
+
+scenarios('.')  # bind all scenarios in the current folder to pytest test functions
 
 
 @fixture()
 def app() -> App:
     return App()
 
-
-@scenario('all.feature', 'Loading Data from TSV')
-def test_data_shows_up_on_load():
-    ...
-
-
-@scenario('processing.feature', 'Save Merged CSV')
-def test_data_is_exported():
-    ...
-
-
-@scenario('processing.feature', 'Filter Cells by single Brain Region')
-def test_filter_plot_by_brain_region():
-    ...
-
-
-@scenario('processing.feature', 'Export Brain-Region Filtered Cells')
-def test_exported_data_is_filtered_by_brain_region():
-    ...
-
-
-@scenario('all.feature', 'Export Qupath Cell-Registration Groovy Script')
-def test_groovy_file_is_exported():
-    ...
 
 @given("the user has loaded the Allen Mouse Atlas")
 def step_impl(app: App):
@@ -133,3 +111,15 @@ def step_impl(tmp_path, filename, brain_region):
 )
 def step_impl(app: App, tmp_path, filename: Path):
     app.save_groovy_script_button.submit(tmp_path / filename)
+
+
+@when("the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50")
+def step_impl():
+    raise NotImplementedError(
+        u'STEP: When the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50')
+
+
+@then("only cells that have up to 50 spots in the Esr1 (Opal 480) channel are shown")
+def step_impl():
+    raise NotImplementedError(
+        u'STEP: Then only cells that have up to 50 spots in the Esr1 (Opal 480) channel are shown')
