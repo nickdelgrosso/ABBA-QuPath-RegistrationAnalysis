@@ -32,8 +32,8 @@ jobs:
 #      env:
 #        QT_DEBUG_PLUGINS: 1
       run: |
-#        xvfb-run coverage run --source regexport -m pytest
         coverage run --source regexport -m pytest
+#        xvfb-run coverage run --source regexport -m pytest
     - name: Coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
