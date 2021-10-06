@@ -8,6 +8,7 @@ from regexport.actions.load_cells import LoadCellsActionModel, LoadCellsAction
 from regexport.actions.save_cells import SaveCellsActionModel, SaveCellsAction
 from regexport.actions.save_script import SaveGroovyScriptActionModel, SaveGroovyScriptAction
 from regexport.model import AppState
+from regexport.utils.exceptions import show_dialog_box_on_uncaught_exception
 from regexport.views.histogram import HistogramModel, HistogramView
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
@@ -50,6 +51,7 @@ class App:
         self.save_groovy_script_button = SaveGroovyScriptActionModel()
 
     def create_gui(self) -> QMainWindow:
+        show_dialog_box_on_uncaught_exception()
         return MainWindow(
             main_widgets=[
                 BrainRegionTree(model=self.brain_region_tree),
