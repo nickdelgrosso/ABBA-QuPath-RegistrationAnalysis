@@ -18,6 +18,7 @@ class SaveCellsActionModel(HasTraits):
     def submit(self, filename: Path, selected_regions_only: bool = False):
         print('File saving...')
 
+        df = self.model.selected_cells if selected_regions_only else self.model.cells
         types = {
             'Image': 'category',
             'BrainRegion': 'category',
@@ -28,10 +29,8 @@ class SaveCellsActionModel(HasTraits):
         }
 
         types.update({col: 'uint16' for col in self.model.cells.columns if "Num Spots" in col})
-        df = self.model.cells.astype(types)
+        df = df.astype(types)
         df: pd.DataFrame = df.drop(columns=['BGIdx'])
-        if selected_regions_only:
-            df = df.iloc[self.model.selected_cell_ids]
 
         print(df.info())
         print(filename)

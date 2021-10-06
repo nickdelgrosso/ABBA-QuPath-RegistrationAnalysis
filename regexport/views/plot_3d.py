@@ -27,19 +27,18 @@ class PlotterModel(HasTraits):
             lambda atlas: Path(str(atlas.structures[997]['mesh_filename'])) if atlas is not None else None
         )
         model.observe(self.link_cells_to_points, names=[
-            'selected_cell_ids', 'cells', 'selected_colormap', 'column_to_plot',
+            'selected_cells', 'selected_colormap', 'column_to_plot',
         ])
 
     def link_cells_to_points(self, change):
         model = self.model
-        if model.cells is None:
+        if model.selected_cells is None:
             self.points = PointCloud()
             return
-        color_col = model.cells[model.column_to_plot]
+        color_col = model.selected_cells[model.column_to_plot]
         points = plot_cells(
-            positions=model.cells[['X', 'Y', 'Z']].values * 1000,
+            positions=model.selected_cells[['X', 'Y', 'Z']].values * 1000,
             colors=color_col.cat.codes.values if color_col.dtype.name == 'category' else color_col.values,
-            indices=model.selected_cell_ids if model.selected_cell_ids is not None else (),
             cmap=self.model.selected_colormap
         )
         self.points = points

@@ -23,6 +23,7 @@ class AppState(HasTraits):
     column_to_plot = Unicode(default_value="BrainRegion")
     colormap_options = List(Unicode(), default_value=[cmap for cmap in plt.colormaps() if not cmap.endswith('_r')])#['tab20c', 'viridis'])
     selected_colormap = Unicode(default_value='tab20c')
+    selected_cells = Instance(pd.DataFrame, allow_none=True)
 
     @observe('cells')
     def _update_column_to_plot_options(self, change):
@@ -43,9 +44,11 @@ class AppState(HasTraits):
             return
         elif len(self.selected_region_ids) == 0:
             self.selected_cell_ids = self.cells.index.values
+            self.selected_cells = self.cells
         else:
             is_parented = self.cells.groupby('BGIdx', as_index=False).BGIdx.transform(
                 lambda ids: is_parent(ids.values[0], selected_ids=self.selected_region_ids, tree=self.atlas.hierarchy) if ids.values[0] != 0 else False
             )
             only_parented = is_parented[is_parented.BGIdx].index.values
             self.selected_cell_ids = only_parented
+            self.selected_cells = self.cells.iloc[only_parented]

@@ -21,10 +21,10 @@ class PointCloud:
 
 
 @warn_if_slow()
-def plot_cells(positions: np.ndarray, colors: np.ndarray, indices: Tuple[int], cmap: str = 'tab20c') -> PointCloud:
+def plot_cells(positions: np.ndarray, colors: np.ndarray, cmap: str = 'tab20c') -> PointCloud:
     return PointCloud(
-        coords=positions[indices, :],
-        colors=(selected_colors := convert_values_to_colors(colors, getattr(plt.cm, cmap))[indices])[:, :3],
+        coords=positions,
+        colors=(selected_colors := convert_values_to_colors(colors, getattr(plt.cm, cmap)))[:, :3],
         alphas=selected_colors[:, 3:4],
     )
 
