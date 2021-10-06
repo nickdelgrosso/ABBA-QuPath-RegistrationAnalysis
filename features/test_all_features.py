@@ -39,7 +39,7 @@ def step_impl(app: App):
     app.load_atlas_button.click()
 
 
-@given("no cells are plotted onscreeen")
+@given("no cells are plotted onscreen")
 def step_impl(app: App):
     plotted_points = app.plot_window.points
     assert len(plotted_points.coords) == 0  # no cells onscreen

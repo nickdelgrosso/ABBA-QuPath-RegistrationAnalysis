@@ -17,7 +17,7 @@ Feature: All Features
 
   Scenario: Loading Data from TSV
     Given the user has loaded the Allen Mouse Atlas
-    Given no cells are plotted onscreeen
+    Given no cells are plotted onscreen
     When the user loads a TSV file exported from QuPath
     Then the 3D cells positions should appear online
 
