@@ -33,9 +33,6 @@ class AppState(HasTraits):
         else:
             self.max_numspots_filters = {col: int(self.cells[col].max()) for col in self.cells.columns if 'Num Spots' in col}
 
-    @observe('max_numspots_filters')
-    def _print(self, change):
-        print('new filters', self.max_numspots_filters)
 
     @observe('cells')
     def _update_column_to_plot_options(self, change):
@@ -50,17 +47,26 @@ class AppState(HasTraits):
     def _validate_column_to_plot(self, change):
         assert self.column_to_plot in self.column_to_plot_options
 
-    @observe('selected_region_ids', 'cells')
+    @observe('selected_region_ids', 'cells', 'max_numspots_filters')
     def _update_selected_cell_ids(self, change):
+
         if self.cells is None:
             return
-        elif len(self.selected_region_ids) == 0:
+        if len(self.selected_region_ids) == 0:
             self.selected_cell_ids = self.cells.index.values
-            self.selected_cells = self.cells
+            selected_cells = self.cells
         else:
             is_parented = self.cells.groupby('BGIdx', as_index=False).BGIdx.transform(
                 lambda ids: is_parent(ids.values[0], selected_ids=self.selected_region_ids, tree=self.atlas.hierarchy) if ids.values[0] != 0 else False
             )
             only_parented = is_parented[is_parented.BGIdx].index.values
             self.selected_cell_ids = only_parented
-            self.selected_cells = self.cells.iloc[only_parented]
+            selected_cells = self.cells.iloc[only_parented]
+
+
+        query = ' & '.join(f"(`{channel}` <= {value})" for channel, value in self.max_numspots_filters.items())
+
+        print('querying')
+        selected_cells2 = selected_cells.query(query)
+        print('queried')
+        self.selected_cells = selected_cells2

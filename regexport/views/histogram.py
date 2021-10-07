@@ -14,15 +14,16 @@ class HistogramModel(HasTraits):
 
     def register(self, model: AppState):
         self.model = model
-        model.observe(self.update, ['cells', 'column_to_plot'])
+        model.observe(self.update, ['selected_cells', 'column_to_plot'])
 
     def update(self, change):
         model = self.model
-        if model.cells is None:
+        if model.selected_cells is None:
             self.data = np.zeros(0)
-        elif (data_column := model.cells[model.column_to_plot]).dtype.name == 'category':
+        elif (data_column := model.selected_cells[model.column_to_plot]).dtype.name == 'category':
             self.data = np.zeros(0)
         else:
+            print(f'updating selected cell data ({len(data_column)} rows)')
             self.data = data_column.values
 
 class HistogramView(HasWidget):
