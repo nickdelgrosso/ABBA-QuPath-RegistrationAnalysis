@@ -113,13 +113,18 @@ def step_impl(app: App, tmp_path, filename: Path):
     app.save_groovy_script_button.submit(tmp_path / filename)
 
 
-@when("the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50")
-def step_impl():
-    raise NotImplementedError(
-        u'STEP: When the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50')
+@when(
+    parse("the user sets the maximum number of spots in the {channel_name} channel to {max_spots}"),
+    converters={'max_spots': int},
+)
+def step_impl(app: App, channel_name: str, max_spots: int):
+    app.channel_filter_model.set_max(channel_name, max_spots)
 
 
-@then("only cells that have up to 50 spots in the Esr1 (Opal 480) channel are shown")
-def step_impl():
-    raise NotImplementedError(
-        u'STEP: Then only cells that have up to 50 spots in the Esr1 (Opal 480) channel are shown')
+@then(
+    parse("only cells that have up to {max_spots} spots in the {channel_name} channel are shown"),
+    converters={'max_spots': int},
+)
+def step_impl(app: App, max_spots: int, channel_name: str):
+    full_channel_name = f"{channel_name}: Num Spots"
+    assert app.model.selected_cells[full_channel_name].max() <= max_spots

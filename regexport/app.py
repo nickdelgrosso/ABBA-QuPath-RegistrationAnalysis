@@ -1,5 +1,3 @@
-from dataclasses import dataclass, field, fields, Field
-
 from PyQt5.QtWidgets import QMainWindow
 
 from regexport.actions.download_biop_extensions import SaveBiopExtensionsAction, SaveBiopExtensionsActionModel
@@ -9,6 +7,7 @@ from regexport.actions.save_cells import SaveCellsActionModel, SaveCellsAction
 from regexport.actions.save_script import SaveGroovyScriptActionModel, SaveGroovyScriptAction
 from regexport.model import AppState
 from regexport.utils.exceptions import show_dialog_box_on_uncaught_exception
+from regexport.views.channel_filter import ChannelFilterView, ChannelFilterModel
 from regexport.views.histogram import HistogramModel, HistogramView
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
@@ -50,8 +49,11 @@ class App:
         self.save_biop_extensions_button = SaveBiopExtensionsActionModel()
         self.save_groovy_script_button = SaveGroovyScriptActionModel()
 
+        self.channel_filter_model = ChannelFilterModel()
+        self.channel_filter_model.register(model=self.model)
+
     def create_gui(self) -> QMainWindow:
-        show_dialog_box_on_uncaught_exception()
+        # show_dialog_box_on_uncaught_exception()
         return MainWindow(
             main_widgets=(
                 BrainRegionTree(model=self.brain_region_tree),
@@ -61,6 +63,7 @@ class App:
                         DropdownTextSelectorView(model=self.colordata_selector_model),
                         DropdownTextSelectorView(model=self.colormap_selector_model),
                         HistogramView(model=self.histogram_model),
+                        ChannelFilterView(model=self.channel_filter_model),
                     )
                 ),
             ),
@@ -73,3 +76,5 @@ class App:
             )
         )
 
+    def set_max(self, channel_name, max_spots):
+        ...
