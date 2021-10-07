@@ -20,7 +20,7 @@ class ChannelFilterModel(HasTraits):
         )
 
     def create_new_sliders(self, max_numspots_filters: Dict[str, int]) -> List[LabelledSliderModel]:
-        if not len(self.sliders) == len(max_numspots_filters) or not all(slider.label in max_numspots_filters for slider in self.sliders):
+        if set(slider.label for slider in self.sliders) != set(max_numspots_filters):
             sliders = []
             for chan, v in max_numspots_filters.items():
                 slider = LabelledSliderModel(label=chan, max=v, value=v)

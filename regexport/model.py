@@ -33,6 +33,10 @@ class AppState(HasTraits):
         else:
             self.max_numspots_filters = {col: int(self.cells[col].max()) for col in self.cells.columns if 'Num Spots' in col}
 
+    @observe('max_numspots_filters')
+    def _print(self, change):
+        print('new filters', self.max_numspots_filters)
+
     @observe('cells')
     def _update_column_to_plot_options(self, change):
         if self.cells is None:
