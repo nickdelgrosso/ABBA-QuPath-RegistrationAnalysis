@@ -114,11 +114,15 @@ def step_impl(app: App, tmp_path, filename: Path):
 
 
 @when(
-    parse("the user sets the maximum number of spots in the {channel_name} channel to {max_spots}"),
-    converters={'max_spots': int},
+    parse("the user sets the maximum {measurement} in the {channel_name} channel to {max_spots}"),
+    converters={
+        'max_spots': int,
+        'measurement': lambda s: {"number of spots": "Num Spots"}[s]
+    },
 )
-def step_impl(app: App, channel_name: str, max_spots: int):
-    app.channel_filter_model.set_max(channel_name, max_spots)
+def step_impl(app: App, measurement: str, channel_name: str, max_spots: int):
+    full_channel_name = f"{channel_name}: {measurement}"
+    app.channel_filter_model.set_max(full_channel_name, max_spots)
 
 
 @then(

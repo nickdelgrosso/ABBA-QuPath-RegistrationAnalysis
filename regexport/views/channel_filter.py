@@ -19,6 +19,14 @@ class ChannelFilterModel(HasTraits):
             lambda max_filters: self.create_new_sliders(max_filters),
         )
 
+    def set_max(self, channel: str, value: int):
+        for slider in self.sliders:
+            if slider.label == channel:
+                slider.value = value
+                return
+        else:
+            raise ValueError(f"Slider with label {channel} not found.")
+
     def create_new_sliders(self, max_numspots_filters: Dict[str, int]) -> List[LabelledSliderModel]:
         if set(slider.label for slider in self.sliders) != set(max_numspots_filters):
             sliders = []

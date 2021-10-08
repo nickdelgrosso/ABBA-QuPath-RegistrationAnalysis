@@ -1,10 +1,14 @@
+from functools import partial
+
 import numpy as np
+from PyQt5.QtCore import QThreadPool
 from traitlets import HasTraits, Instance, Unicode
 from vedo import Plotter
 from vedo.pyplot import histogram
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from regexport.model import AppState
+from regexport.utils.parallel import Task
 from regexport.views.utils import HasWidget
 
 
@@ -37,13 +41,24 @@ class HistogramView(HasWidget):
         self.model = model
         self.model.observe(self.render)
 
+    @staticmethod
+    def make_histogram(data: np.ndarray):
+        bin_edges = np.histogram_bin_edges(data, bins='scott')
+        hist = histogram(data, bins=len(bin_edges), gap=0.)
+        return hist
+
+    @staticmethod
+    def send_hist_to_plotter(plotter, hist):
+        plotter.clear()
+        plotter.show(hist, mode=12)
+
+
     def render(self, change=None):
         data = self.model.data
         if len(data) == 0:
             self.plotter.clear()
             return
-        bin_edges = np.histogram_bin_edges(data, bins='fd')
-        print('bin edges:', bin_edges)
-        hist = histogram(data, bins=len(bin_edges), gap=0., title=self.model.title, )
-        self.plotter.clear()
-        self.plotter.show(hist, mode=12)
+        task = Task(self.make_histogram, data=data)
+        task.signals.finished.connect(partial(self.send_hist_to_plotter, self.plotter))
+        pool = QThreadPool.globalInstance()
+        pool.start(task)
