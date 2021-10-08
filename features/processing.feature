@@ -14,6 +14,11 @@ Feature: Data Processing
     When the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50
     Then only cells that have up to 50 spots in the Esr1 (Opal 480) channel are shown
 
+  Scenario: Visualize Distribution of Number of Spots in a Specific Channel
+    When the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50
+    And the user sets the visualization to the Esr1 (Opal 480) channel
+    Then a histogram is shown with the number of spots distribution from 0 to 50 spots
+
   Scenario: Export Brain-Region Filtered Cells
     Given the user has only selected the Anterior hypothalamic nucleus brain region
     When the user exports the data to example.csv with brain region filtering set to on

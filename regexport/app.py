@@ -39,12 +39,12 @@ class App:
         self.colormap_selector_model.register(model=self.model, options_attr='colormap_options',
                                               selected_attr='selected_colormap')
 
-        self.colordata_selector_model = TextSelectorModel()
-        self.colordata_selector_model.register(model=self.model, options_attr='column_to_plot_options',
-                                               selected_attr='column_to_plot')
+        self.colordata_selector_dropdown = TextSelectorModel()
+        self.colordata_selector_dropdown.register(model=self.model, options_attr='column_to_plot_options',
+                                                  selected_attr='column_to_plot')
 
-        self.histogram_model = HistogramModel()
-        self.histogram_model.register(model=self.model)
+        self.num_spots_histogram = HistogramModel()
+        self.num_spots_histogram.register(model=self.model)
 
         self.save_biop_extensions_button = SaveBiopExtensionsActionModel()
         self.save_groovy_script_button = SaveGroovyScriptActionModel()
@@ -60,9 +60,9 @@ class App:
                 PlotterView(model=self.plot_window),
                 Sidebar(
                     widgets=(
-                        DropdownTextSelectorView(model=self.colordata_selector_model),
+                        DropdownTextSelectorView(model=self.colordata_selector_dropdown),
                         DropdownTextSelectorView(model=self.colormap_selector_model),
-                        HistogramView(model=self.histogram_model),
+                        HistogramView(model=self.num_spots_histogram),
                         ChannelFilterView(model=self.channel_filter_model),
                     )
                 ),

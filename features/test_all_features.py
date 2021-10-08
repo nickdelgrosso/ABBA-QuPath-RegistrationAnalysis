@@ -132,3 +132,23 @@ def step_impl(app: App, measurement: str, channel_name: str, max_spots: int):
 def step_impl(app: App, max_spots: int, channel_name: str):
     full_channel_name = f"{channel_name}: Num Spots"
     assert app.model.selected_cells[full_channel_name].max() <= max_spots
+
+
+@when(
+    parse("the user sets the visualization to the {channel_name} channel"),
+)
+def step_impl(app: App, channel_name: str):
+    full_channel_name = f"{channel_name}: Num Spots"
+    app.colordata_selector_dropdown.select(full_channel_name)
+
+
+@then(
+    parse("a histogram is shown with the number of spots distribution from {range_min} to {range_max} spots"),
+    converters={'range_min': int, 'range_max': int},
+)
+def step_impl(app: App, range_min: int, range_max: int):
+    hist = app.num_spots_histogram.histogram
+    assert hist is not None
+    assert max(hist.bin_edges) == range_max
+    assert min(hist.bin_edges) == range_min
+    assert len(hist.bar_heights) == len(hist.bin_edges) - 1

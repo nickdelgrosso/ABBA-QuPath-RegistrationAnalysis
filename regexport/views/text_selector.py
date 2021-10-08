@@ -24,6 +24,11 @@ class TextSelectorModel(HasTraits):
     def reset_selected(self, changed):
         self.selected = self.options[0]
 
+    def select(self, option: str):
+        if option not in self.options:
+            raise ValueError(f"'{option}' not in {self.options}")
+        self.selected = option
+
 
 class DropdownTextSelectorView(HasWidget):
     def __init__(self, model: TextSelectorModel):
