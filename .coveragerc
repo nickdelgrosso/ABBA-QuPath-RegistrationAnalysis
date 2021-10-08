@@ -1,0 +1,3 @@
+[run]
+source = regexport
+omit = *qupath_scripts*
