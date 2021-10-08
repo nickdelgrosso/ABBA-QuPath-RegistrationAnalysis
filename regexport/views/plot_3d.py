@@ -100,6 +100,7 @@ class PlotterView(HasWidget):
             colors = (np.hstack((points.colors, points.alphas)) * 255).astype(int)  # alphas needed for fast rendering.
             actors.append(Points(coords, r=3, c=colors))
 
+        self.plotter.clear(at=0)
         self.plotter.show(actors, at=0)
-        self.plotter.addInset(self._atlas_mesh, pos=(.9, .9), size=0.1, c='w', draggable=True)
+        # self.plotter.addInset(self._atlas_mesh, pos=(.9, .9), size=0.1, c='w', draggable=True)
         # note: look at from vedo.applications import SlicerPlotter for inspiration
