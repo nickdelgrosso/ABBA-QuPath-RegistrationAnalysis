@@ -152,3 +152,11 @@ def step_impl(app: App, range_min: int, range_max: int):
     assert max(hist.bin_edges) == range_max
     assert min(hist.bin_edges) == range_min
     assert len(hist.bar_heights) == len(hist.bin_edges) - 1
+
+
+@then(
+    parse("the proportion of cells rejected by the {channel_name} channel setting is shown to be {rejection_level}"),
+    converters={'rejection_level': lambda val: None},  # haven't hard-coded the dataset, so can't predict value here.
+)
+def step_impl(app: App, channel_name: str, rejection_level):
+    ...

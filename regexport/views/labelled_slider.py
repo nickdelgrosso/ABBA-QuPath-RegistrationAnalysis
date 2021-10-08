@@ -10,6 +10,7 @@ class LabelledSliderModel(HasTraits):
     min = Int(default_value=0)
     max = Int()
     value = Int(default_value=1000)
+    label2 = Unicode(allow_none=True)
 
     def __repr__(self):
         return f"{self.__class__.__name__}(label='{self.label}', min={self.min}, max={self.max}, value={self.value})"

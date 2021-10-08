@@ -13,6 +13,7 @@ Feature: Data Processing
   Scenario: Filter Cells by Number of Spots in a Specific Channel
     When the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50
     Then only cells that have up to 50 spots in the Esr1 (Opal 480) channel are shown
+    And the proportion of cells rejected by the Esr1 (Opal 480) channel setting is shown to be somewhere between 0% and 100%
 
   Scenario: Visualize Distribution of Number of Spots in a Specific Channel
     When the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 50
