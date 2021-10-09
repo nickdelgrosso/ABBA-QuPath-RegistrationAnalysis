@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QComboBox
+from PySide2.QtWidgets import QComboBox
 from traitlets import HasTraits, List as TList, Unicode, directional_link, observe
 
 from regexport.model import AppState

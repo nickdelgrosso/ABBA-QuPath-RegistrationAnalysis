@@ -1,7 +1,7 @@
 from importlib.resources import read_text
 from pathlib import Path
 
-from PyQt5.QtWidgets import QAction, QFileDialog
+from PySide2.QtWidgets import QFileDialog, QAction
 
 from regexport import qupath_scripts
 

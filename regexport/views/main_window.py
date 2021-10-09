@@ -1,14 +1,15 @@
-from typing import List, Union, Tuple
+from typing import Union, Tuple
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QWidget, QSplitter, QMenu, QAction, QToolBar
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QMainWindow, QWidget, QSplitter, QToolBar, QAction
 
 from .utils import HasWidget
 
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, main_widgets: Tuple[Union[QWidget, HasWidget], ...] = (), menu_actions: Tuple[QAction, ...] = ()):
+    def __init__(self, main_widgets: Tuple[Union[QWidget, HasWidget], ...] = (),
+                 menu_actions: Tuple[QAction, ...] = ()):
         super().__init__()
         self._widgets = main_widgets  # keep reference to these widgets, so they aren't garbage collected.
 
@@ -22,5 +23,3 @@ class MainWindow(QMainWindow):
         for action in menu_actions:
             tool_bar.addAction(action)
         self.addToolBar(Qt.TopToolBarArea, tool_bar)
-
-

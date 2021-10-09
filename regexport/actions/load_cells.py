@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List
 
 import pandas as pd
-from PyQt5.QtWidgets import QAction, QFileDialog
+from PySide2.QtWidgets import QFileDialog, QAction
 from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Unicode, directional_link, Instance, Bool
 

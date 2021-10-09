@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from PyQt5.QtWidgets import QVBoxLayout, QWidget
+from PySide2.QtWidgets import QVBoxLayout, QWidget
 
 from .utils import HasWidget
 

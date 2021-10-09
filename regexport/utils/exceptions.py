@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtWidgets import QMessageBox
+from PySide2.QtWidgets import QMessageBox
 
 
 def _show_exception_dialog(t, value, traceback):

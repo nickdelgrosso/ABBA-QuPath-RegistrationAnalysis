@@ -37,7 +37,7 @@ setup(
         'qtpy~=1.11.0',
         'vtk~=9.0.3',
         'vedo~=2021.0.5',
-        'pyqt5~=5.15.4',
+        'PySide2',
         'treelib~=1.6.1',
         'traitlets~=5.1.0',
         'bg-atlasapi',

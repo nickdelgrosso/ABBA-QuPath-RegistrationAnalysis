@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow
+from PySide2.QtWidgets import QMainWindow
 
 from regexport.actions.download_biop_extensions import SaveBiopExtensionsAction, SaveBiopExtensionsActionModel
 from regexport.actions.load_atlas import LoadAtlasActionModel, LoadAtlasAction

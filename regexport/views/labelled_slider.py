@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QLabel, QSlider
 from traitlets import HasTraits, Unicode, Int, observe
 
 from regexport.views.utils import HasWidget

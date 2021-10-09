@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QWidgetItem, QLayout
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QWidgetItem, QLayout
 from traitlets import HasTraits, List as TList, Instance, link, observe, directional_link
 
 from regexport.model import AppState

@@ -1,10 +1,10 @@
 from typing import Callable
 
-from PyQt5.QtCore import QObject, pyqtSignal, QRunnable, QThread
+from PySide2.QtCore import QObject, Signal, QRunnable, QThread
 
 
 class TaskSignals(QObject):
-    finished = pyqtSignal(object)
+    finished = Signal(object)
 
 
 class Task(QRunnable):
@@ -27,7 +27,7 @@ class Task(QRunnable):
         self.kwargs = kwargs
         self.signals = TaskSignals()
 
-    # @pyqtSlot
+    # @Slot
     def run(self):
         new_thread_id = int(QThread.currentThreadId())
         assert self._orig_thread_id != new_thread_id, "Worker not running in seperate thread, pointless."

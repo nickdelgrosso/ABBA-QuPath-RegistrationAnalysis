@@ -1,16 +1,13 @@
-from functools import partial
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
-from PyQt5.QtCore import QThreadPool
 from traitlets import HasTraits, Instance, directional_link
 from vedo import Plotter, Mesh, Points
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from regexport.utils.point_cloud import PointCloud
 from regexport.model import AppState
-from regexport.utils.parallel import Task
+from regexport.utils.point_cloud import PointCloud
 from regexport.utils.profiling import warn_if_slow
 from regexport.views.utils import HasWidget
 
@@ -82,11 +79,12 @@ class PlotterView(HasWidget):
             self._atlas_mesh = Mesh()
         else:
             print('loading')
-            worker = Task(self.load_mesh, self.model.atlas_mesh)
-            worker.signals.finished.connect(partial(setattr, self, "atlas_mesh"))
-
-            pool = QThreadPool.globalInstance()
-            pool.start(worker)
+            # worker = Task(self.load_mesh, self.model.atlas_mesh)
+            # worker.signals.finished.connect(partial(setattr, self, "atlas_mesh"))
+            # 
+            # pool = QThreadPool.globalInstance()
+            # pool.start(worker)
+            self.atlas_mesh = self.load_mesh(self.model.atlas_mesh)
 
 
     @warn_if_slow()

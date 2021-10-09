@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QTreeWidget, QAbstractItemView, QTreeWidgetItem
+from PySide2.QtWidgets import QTreeWidget, QAbstractItemView, QTreeWidgetItem
 from traitlets import HasTraits, Instance, Tuple, directional_link
 from treelib import Tree
 

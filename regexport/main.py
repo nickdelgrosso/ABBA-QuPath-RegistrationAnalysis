@@ -1,9 +1,9 @@
 import sys
 
-from PyQt5.QtWidgets import QApplication
-
+from PySide2.QtWidgets import QApplication
+#
 from regexport.app import App
-
+#
 
 def main():
     qapp = QApplication(sys.argv)

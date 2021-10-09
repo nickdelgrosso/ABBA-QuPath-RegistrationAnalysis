@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
-from PyQt5.QtWidgets import QAction, QFileDialog, QCheckBox, QDialog
+from PySide2.QtWidgets import QFileDialog, QCheckBox, QDialog, QAction
 from traitlets import HasTraits, Bool, directional_link
 
 from regexport.model import AppState
