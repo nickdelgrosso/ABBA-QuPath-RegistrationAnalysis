@@ -33,13 +33,13 @@ def test_dropdown_box_renders_without_problems(qtbot):
     dropdown.render()
 
 
-def test_main_window_renders_without_problems(qtbot):
-    MainWindow()
-
-
-def test_full_app_gui_launches_without_problems(qtbot):
-    app = App()
-    win = app.create_gui()
+# def test_main_window_renders_without_problems(qtbot):
+#     MainWindow()
+#
+#
+# def test_full_app_gui_launches_without_problems(qtbot):
+#     app = App()
+#     win = app.create_gui()
 
 
 def test_app_does_main_actions_without_crashing(qtbot):

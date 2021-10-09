@@ -49,7 +49,7 @@ setup(
             'pytest',
             'pytest-bdd',
             'coverage',
-            # 'pytest-qt',
+            'pytest-qt',
             ],
     },
     entry_points={'console_scripts':[
