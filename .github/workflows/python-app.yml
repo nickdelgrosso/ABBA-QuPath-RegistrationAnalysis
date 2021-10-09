@@ -31,7 +31,6 @@ jobs:
       env:
         QT_DEBUG_PLUGINS: 1
       run: |
-#        coverage run -m pytest
         xvfb-run coverage run -m pytest
     - name: Coveralls
       env:
