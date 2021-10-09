@@ -9,7 +9,7 @@ from ABBA-registered data stored in QuPath projects.
 
 ## Installation
 
-
+   
 ### First-Time Installation
 ```
 pip install ABBA-QuPath-RegistrationExporter
