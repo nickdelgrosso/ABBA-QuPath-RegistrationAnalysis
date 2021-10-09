@@ -33,13 +33,13 @@ def test_dropdown_box_renders_without_problems(qtbot):
     dropdown.render()
 
 
-# def test_main_window_renders_without_problems(qtbot):
-#     MainWindow()
-#
-#
-# def test_full_app_gui_launches_without_problems(qtbot):
-#     app = App()
-#     win = app.create_gui()
+def test_main_window_renders_without_problems(qtbot):
+    MainWindow()
+
+
+def test_full_app_gui_launches_without_problems(qtbot):
+    app = App()
+    win = app.create_gui()
 
 
 def test_app_does_main_actions_without_crashing(qtbot):
@@ -49,4 +49,4 @@ def test_app_does_main_actions_without_crashing(qtbot):
     app.load_cells_button.submit([
         Path("example_data/tsvs_exported_from_qupath/section1.tsv"),
     ])
-    app.colordata_selector_dropdown.select("Esr1 (Opal 480)")
+    app.colordata_selector_dropdown.select('Esr1 (Opal 480): Num Spots')
