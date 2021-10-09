@@ -1,3 +1,6 @@
+from pathlib import Path
+
+from regexport.app import App
 from regexport.views.histogram import HistogramView, HistogramModel
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
@@ -33,3 +36,17 @@ def test_dropdown_box_renders_without_problems(qtbot):
 def test_main_window_renders_without_problems(qtbot):
     MainWindow()
 
+
+def test_full_app_gui_launches_without_problems(qtbot):
+    app = App()
+    win = app.create_gui()
+
+
+def test_app_does_main_actions_without_crashing(qtbot):
+    app = App()
+    win = app.create_gui()
+    app.load_atlas_button.click()
+    app.load_cells_button.submit([
+        Path("example_data/tsvs_exported_from_qupath/section1.tsv"),
+    ])
+    app.colordata_selector_dropdown.select("Esr1 (Opal 480)")
