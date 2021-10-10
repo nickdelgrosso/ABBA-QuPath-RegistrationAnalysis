@@ -83,7 +83,6 @@ class SaveCellsAction(QAction):
         self.setEnabled(self.model.enabled)
 
     def click(self):
-        # filename, filetype_filter = QFileDialog.getSaveFileName(filter="Feather file (*.feather);;CSV file (*.csv)")
         dialog = ChkBxFileDialog()
         if dialog.exec_() == QDialog.Accepted:
             self.model.submit(
