@@ -20,9 +20,9 @@ from regexport.views.text_selector import DropdownTextSelectorView, TextSelector
 #
 
 def test_region_tree_renders_without_problems(qtbot):
-    ...
-    # tree_view = BrainRegionTree(model=BrainRegionTreeModel())
-    # tree_view.render()
+    tree_view = BrainRegionTree(model=BrainRegionTreeModel())
+    qtbot.add_widget(tree_view.widget)
+    tree_view.render()
 
 #
 # def test_sidebar_renders_without_problems(qtbot):
