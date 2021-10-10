@@ -50,6 +50,7 @@ setup(
             'pytest-bdd',
             'coverage',
             'pytest-qt',
+            'pytest-xvfb'
             ],
     },
     entry_points={'console_scripts':[

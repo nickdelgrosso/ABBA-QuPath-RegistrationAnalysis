@@ -13,13 +13,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      DISPLAY: ':99.0'
     steps:
     - uses: actions/checkout@v2
     - name: Install Platform Dependencies
       run: |
         sudo apt install -y xvfb x11-utils libxkbcommon-x11-0 # https://stackoverflow.com/questions/60692711/cant-create-python-qapplication-in-github-action
-        export DISPLAY=:99.0
+        sudo apt install -y libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0  # https://pytest-qt.readthedocs.io/en/latest/troubleshooting.html#github-actions
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
@@ -30,9 +31,8 @@ jobs:
     - name: Test with pytest, tracking coverage
       env:
         QT_DEBUG_PLUGINS: 1
-        DISPLAY: :99.0
       run: |
-        xvfb-run coverage run -m pytest
+        coverage run -m pytest
     - name: Coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
