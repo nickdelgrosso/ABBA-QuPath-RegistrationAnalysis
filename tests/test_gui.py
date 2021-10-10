@@ -9,15 +9,17 @@ from regexport.views.sidebar import Sidebar
 from regexport.views.text_selector import DropdownTextSelectorView, TextSelectorModel
 
 
-# def test_histogram_renders_without_problems(qtbot):
-#     histogram_view = HistogramView(model=HistogramModel())
-#     histogram_view.render()
-#
-#
-# def test_plotter_renders_without_problems(qtbot):
-#     plotter_view = PlotterView(model=PlotterModel())
-#     plotter_view.render()
-#
+def test_histogram_renders_without_problems(qtbot):
+    histogram_view = HistogramView(model=HistogramModel())
+    qtbot.add_widget(histogram_view.widget)
+    histogram_view.render()
+
+
+def test_plotter_renders_without_problems(qtbot):
+    plotter_view = PlotterView(model=PlotterModel())
+    qtbot.add_widget(plotter_view.widget)
+    plotter_view.render()
+
 
 def test_region_tree_renders_without_problems(qtbot):
     tree_view = BrainRegionTree(model=BrainRegionTreeModel())
