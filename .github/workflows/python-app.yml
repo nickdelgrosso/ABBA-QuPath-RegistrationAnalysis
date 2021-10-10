@@ -30,6 +30,7 @@ jobs:
     - name: Test with pytest, tracking coverage
       env:
         QT_DEBUG_PLUGINS: 1
+        DISPLAY: :99.0
       run: |
         xvfb-run coverage run -m pytest
     - name: Coveralls

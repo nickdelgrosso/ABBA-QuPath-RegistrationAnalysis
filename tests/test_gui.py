@@ -19,8 +19,8 @@ from regexport.views.text_selector import DropdownTextSelectorView, TextSelector
 #     plotter_view.render()
 #
 
-def test_region_tree_renders_without_problems(qtbot):
-    ...
+# def test_region_tree_renders_without_problems(qtbot):
+#     ...
     # tree_view = BrainRegionTree(model=BrainRegionTreeModel())
     # tree_view.render()
 
