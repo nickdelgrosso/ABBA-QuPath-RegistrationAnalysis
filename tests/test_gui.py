@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from treelib import Tree
 
 from regexport.app import App
 from regexport.views.channel_filter import ChannelFilterView, ChannelFilterModel
@@ -26,7 +27,13 @@ def test_plotter_renders_without_problems(qtbot):
 
 
 def test_region_tree_renders_without_problems(qtbot):
-    tree_view = BrainRegionTree(model=BrainRegionTreeModel())
+    tree = Tree()
+    tree.create_node(identifier=0, data='all regions')
+    tree.create_node(identifier=20, data='Cerebrum', parent=0)
+    tree.create_node(identifier=30, data='Cerebellum', parent=0)
+    tree.create_node(identifier=40, data='V1', parent=20)
+
+    tree_view = BrainRegionTree(model=BrainRegionTreeModel(tree=tree))
     qtbot.add_widget(tree_view.widget)
     tree_view.render()
 
