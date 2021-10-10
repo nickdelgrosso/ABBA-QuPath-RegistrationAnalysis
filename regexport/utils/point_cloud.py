@@ -21,10 +21,10 @@ class PointCloud:
 
     @classmethod
     def from_cmap(cls, positions: np.ndarray, color_levels: np.ndarray, cmap: str = 'tab20c') -> PointCloud:
-        selected_colors = convert_values_to_colors(color_levels, getattr(plt.cm, cmap))[:, :3]
+        selected_colors = convert_values_to_colors(color_levels, getattr(plt.cm, cmap))
         return cls(
             coords=positions,
-            colors=selected_colors,
+            colors=selected_colors[:, :3],
             alphas=selected_colors[:, 3:4],
         )
 
