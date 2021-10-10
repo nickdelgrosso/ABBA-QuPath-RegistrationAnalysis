@@ -9,22 +9,25 @@ from bg_atlasapi import BrainGlobeAtlas
 def read_detection_file(filename: Path, atlas: BrainGlobeAtlas) -> pd.DataFrame:
     df = pd.read_csv(filename, sep='\t')
     print(df.columns)
+    x_mm_col = 'Allen CCFv3 X mm'
+    y_mm_col = 'Allen CCFv3 Y mm'
+    z_mm_col = 'Allen CCFv3 Z mm'
     return (
         df
             .astype({
-                'Allen CCFv3 X mm': float,
-                'Allen CCFv3 Y mm': float,
-                'Allen CCFv3 Z mm': float,
+                x_mm_col: float,
+                y_mm_col: float,
+                z_mm_col: float,
         })
             .pipe(lambda df: df.assign(
-                BGIdx=get_brain_region_label(df['Allen CCFv3 X mm'].values, df['Allen CCFv3 Y mm'].values,
-                                             df['Allen CCFv3 Z mm'].values, annotation=atlas.annotation,
-                                            resolution=atlas.resolution)))
+                BGIdx=get_brain_region_label(df[x_mm_col].values, df[y_mm_col].values,
+                                             df[z_mm_col].values, annotation=atlas.annotation,
+                                             resolution=atlas.resolution)))
             .merge(atlas.lookup_df, right_on="id", left_on="BGIdx", how="left")
             .rename(columns={
-                'Allen CCFv3 X mm': 'X',
-                'Allen CCFv3 Y mm': 'Y',
-                'Allen CCFv3 Z mm': 'Z',
+                x_mm_col: 'X',
+                y_mm_col: 'Y',
+                z_mm_col: 'Z',
                 'name': 'BrainRegion',
                 'acronym': 'Acronym',
         })
