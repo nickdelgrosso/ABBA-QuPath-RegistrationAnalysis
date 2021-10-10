@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QWidgetItem, QLayout
-from traitlets import HasTraits, List as TList, Instance, link, observe, directional_link
+from traitlets import HasTraits, List as TList, Instance, directional_link
 
 from regexport.model import AppState
 from regexport.views.labelled_slider import LabelledSliderView, LabelledSliderModel
@@ -43,7 +43,6 @@ class ChannelFilterModel(HasTraits):
         self.model.max_numspots_filters = {slider.label: slider.value for slider in self.sliders}
 
 
-
 class ChannelFilterView(HasWidget):
 
     def __init__(self, model: ChannelFilterModel):
@@ -57,9 +56,9 @@ class ChannelFilterView(HasWidget):
 
         self.model.observe(self.render)
 
-    def render(self, change):
+    def render(self, change=None):
 
-        if len(change.old) != len(change.new):
+        if change is None or len(change.old) != len(change.new):
             layout: QLayout = self.layout
 
             # Delete any existing sliders
@@ -73,7 +72,7 @@ class ChannelFilterView(HasWidget):
             assert layout.count() == 0  # should be no sliders in the layout at this point.
 
             # Make new sliders
-            for slider_model in change.new:
+            for slider_model in self.model.sliders:
                 print(f"making slider from {slider_model}")
                 slider = LabelledSliderView(model=slider_model)
                 layout.addWidget(slider.widget)

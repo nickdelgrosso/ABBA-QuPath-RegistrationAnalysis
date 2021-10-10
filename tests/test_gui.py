@@ -3,7 +3,9 @@ from pathlib import Path
 import pytest
 
 from regexport.app import App
+from regexport.views.channel_filter import ChannelFilterView, ChannelFilterModel
 from regexport.views.histogram import HistogramView, HistogramModel
+from regexport.views.labelled_slider import LabelledSliderView, LabelledSliderModel
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
 from regexport.views.region_tree import BrainRegionTree, BrainRegionTreeModel
@@ -39,6 +41,22 @@ def test_dropdown_box_renders_without_problems(qtbot):
     qtbot.add_widget(dropdown.widget)
     dropdown.render()
 
+
+def test_labelled_slider_view_renders_without_problems(qtbot):
+    slider = LabelledSliderView(model=LabelledSliderModel())
+    qtbot.add_widget(slider.widget)
+    slider.render()
+
+
+def test_channel_filter_view_renders_without_problems(qtbot):
+    view = ChannelFilterView(model=ChannelFilterModel(
+        sliders=[
+            LabelledSliderModel(label='a'),
+            LabelledSliderModel(label='b'),
+        ]
+    ))
+    qtbot.add_widget(view.widget)
+    view.render()
 
 def test_main_window_renders_without_problems(qtbot):
     main_window = MainWindow()
