@@ -37,7 +37,7 @@ setup(
         'qtpy~=1.11.0',
         'vtk~=9.0.3',
         'vedo~=2021.0.5',
-        'PySide2',
+        'PySide2~=5.14',  # Pyside 5.15.2 is not working properly with CI
         'treelib~=1.6.1',
         'traitlets~=5.1.0',
         'bg-atlasapi',
