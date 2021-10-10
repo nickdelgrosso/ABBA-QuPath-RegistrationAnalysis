@@ -15,8 +15,7 @@ class ChannelFilterModel(HasTraits):
         for slider in self.sliders:
             if slider.label == label:
                 return slider
-        else:
-            raise KeyError(f"Slider with label {label} not found.")
+        raise KeyError(f"Slider with label {label} not found.")
 
     def register(self, model: AppState):
         self.model = model
