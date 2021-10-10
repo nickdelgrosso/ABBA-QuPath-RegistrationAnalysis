@@ -49,12 +49,12 @@ def test_full_app_gui_launches_without_problems(qtbot):
     qtbot.add_widget(win)
 
 
-def test_app_does_main_actions_without_crashing(qtbot):
-    app = App()
-    win = app.create_gui()
-    qtbot.add_widget(win)
-    app.load_atlas_button.click()
-    app.load_cells_button.submit([
-        Path("example_data/tsvs_exported_from_qupath/section1.tsv"),
-    ])
-    app.colordata_selector_dropdown.select('Esr1 (Opal 480): Num Spots')
+# def test_app_does_main_actions_without_crashing(qtbot):
+#     app = App()
+#     win = app.create_gui()
+#     qtbot.add_widget(win)
+#     app.load_atlas_button.click()
+#     app.load_cells_button.submit([
+#         Path("example_data/tsvs_exported_from_qupath/section1.tsv"),
+#     ])
+#     app.colordata_selector_dropdown.select('Esr1 (Opal 480): Num Spots')
