@@ -7,10 +7,10 @@ from PySide2.QtWidgets import QFileDialog, QAction
 class SaveBiopExtensionsActionModel:
     text = "-1. Download BIOP Extensions"
 
-    def download_extensions(self, directory: Path):
+    def submit(self, directory: Path):
         import requests
         if not directory.exists():
-            raise FileNotFoundError(f"directory {directory} does not exist.")
+            directory.mkdir(parents=True, exist_ok=True)
 
         urls = [
             ('extensions', "https://github.com/BIOP/qupath-biop-extensions/releases/download/v2.0.8/biop-tools-2.0.8.jar"),
@@ -51,4 +51,4 @@ class SaveBiopExtensionsAction(QAction):
         # worker = Task(self.model.download_extensions, Path(directory))
         # pool = QThreadPool.globalInstance()
         # pool.start(worker)
-        self.model.download_extensions(Path(directory))
+        self.model.submit(Path(directory))

@@ -12,6 +12,9 @@ Feature: All Features
     When the user loads a TSV file exported from QuPath
     Then the 3D cells positions should appear online
 
+  Scenario: Download Useful ABBA-QuPath Plugin Files
+    When the user asks that ABBA Plugin files be downloaded to the ABBA_plugins directory
+    Then the ABBA_plugins directory contains many ABBA files
 
 
 

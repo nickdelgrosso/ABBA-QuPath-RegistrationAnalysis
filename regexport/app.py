@@ -46,7 +46,7 @@ class App:
         self.num_spots_histogram = HistogramModel()
         self.num_spots_histogram.register(model=self.model)
 
-        self.save_biop_extensions_button = SaveBiopExtensionsActionModel()
+        self.download_biop_extensions_button = SaveBiopExtensionsActionModel()
         self.save_groovy_script_button = SaveGroovyScriptActionModel()
 
         self.channel_filter_model = ChannelFilterModel()
@@ -68,7 +68,7 @@ class App:
                 ),
             ),
             menu_actions=(
-                SaveBiopExtensionsAction(model=self.save_biop_extensions_button),
+                SaveBiopExtensionsAction(model=self.download_biop_extensions_button),
                 SaveGroovyScriptAction(model=self.save_groovy_script_button),
                 LoadAtlasAction(model=self.load_atlas_button),
                 LoadCellsAction(model=self.load_cells_button),

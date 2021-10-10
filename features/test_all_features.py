@@ -160,3 +160,19 @@ def step_impl(app: App, range_min: int, range_max: int):
 )
 def step_impl(app: App, channel_name: str, rejection_level):
     ...
+
+
+@when(
+    parse("the user asks that ABBA Plugin files be downloaded to the {directory} directory"),
+    converters={'directory': Path},
+)
+def step_impl(app: App, tmp_path: Path, directory: Path):
+    app.download_biop_extensions_button.submit(tmp_path / directory)
+
+
+@then(
+    parse("the {directory} directory contains many ABBA files"),
+    converters={'directory': Path},
+)
+def step_impl(app: App, tmp_path: Path, directory: Path):
+    assert (tmp_path / directory / "extensions").exists()
