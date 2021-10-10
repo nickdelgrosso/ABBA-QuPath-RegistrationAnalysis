@@ -24,19 +24,22 @@ def test_region_tree_renders_without_problems(qtbot):
     qtbot.add_widget(tree_view.widget)
     tree_view.render()
 
-#
-# def test_sidebar_renders_without_problems(qtbot):
-#     Sidebar()
-#
-#
-# def test_dropdown_box_renders_without_problems(qtbot):
-#     dropdown = DropdownTextSelectorView(model=TextSelectorModel())
-#     dropdown.render()
-#
-#
-# def test_main_window_renders_without_problems(qtbot):
-#     MainWindow()
-#
+
+def test_sidebar_renders_without_problems(qtbot):
+    sidebar = Sidebar()
+    qtbot.add_widget(sidebar.widget)
+
+
+def test_dropdown_box_renders_without_problems(qtbot):
+    dropdown = DropdownTextSelectorView(model=TextSelectorModel())
+    qtbot.add_widget(dropdown.widget)
+    dropdown.render()
+
+
+def test_main_window_renders_without_problems(qtbot):
+    main_window = MainWindow()
+    qtbot.add_widget(main_window)
+
 #
 # def test_full_app_gui_launches_without_problems(qtbot):
 #     app = App()
