@@ -46,7 +46,7 @@ def test_main_window_renders_without_problems(qtbot):
 def test_full_app_gui_launches_without_problems(qtbot):
     app = App()
     win = app.create_gui()
-    qtbot.add_widget(win)
+    # qtbot.add_widget(win)
 
 
 # def test_app_does_main_actions_without_crashing(qtbot):
