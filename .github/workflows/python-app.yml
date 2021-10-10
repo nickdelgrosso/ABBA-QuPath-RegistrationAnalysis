@@ -31,10 +31,9 @@ jobs:
     - name: Test with pytest, tracking coverage
       env:
         QT_DEBUG_PLUGINS: 1
-        QT_AUTO_SCREEN_SCALE_FACTOR: 0
       run: |
         echo $DISPLAY
-        coverage run -m pytest
+        coverage run -m pytest -m "not buggyci"
     - name: Coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

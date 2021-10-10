@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from regexport.app import App
 from regexport.views.histogram import HistogramView, HistogramModel
 from regexport.views.main_window import MainWindow
@@ -42,13 +44,15 @@ def test_main_window_renders_without_problems(qtbot):
     main_window = MainWindow()
     qtbot.add_widget(main_window)
 
-#
+
+@pytest.mark.buggyci
 def test_full_app_gui_launches_without_problems(qtbot):
     app = App()
     win = app.create_gui()
     qtbot.add_widget(win)
 
 
+@pytest.mark.buggyci
 def test_app_does_main_actions_without_crashing(qtbot):
     app = App()
     win = app.create_gui()
