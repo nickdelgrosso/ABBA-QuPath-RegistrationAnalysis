@@ -50,6 +50,7 @@ setup(
             'coverage',
             'pytest-qt',
             'Pillow',
+            'twine',
         ],
         'ci': [
             'pytest-xvfb',
