@@ -1,6 +1,6 @@
 from abc import ABC
 
-from qtpy.QtWidgets import QWidget
+from PySide2.QtWidgets import QWidget
 
 
 class HasWidget(ABC):
