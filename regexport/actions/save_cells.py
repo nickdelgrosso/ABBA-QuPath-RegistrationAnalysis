@@ -15,10 +15,10 @@ class SaveCellsActionModel(HasTraits):
         self.model = model
         directional_link((model, 'cells'), (self, 'enabled'), lambda cells: cells is not None)
 
-    def submit(self, filename: Path, selected_regions_only: bool = False):
+    def submit(self, filename: Path, export_visible_cells_only: bool = False):
         print('File saving...')
 
-        df = self.model.selected_cells if selected_regions_only else self.model.cells
+        df = self.model.selected_cells if export_visible_cells_only else self.model.cells
         types = {
             'Image': 'category',
             'BrainRegion': 'category',
@@ -45,15 +45,15 @@ class SaveCellsActionModel(HasTraits):
 
 
 class ChkBxFileDialog(QFileDialog):
-    def __init__(self, chkBxTitle="Selected Regions Only", filter="*.txt"):
-        super().__init__(filter=filter)
+    def __init__(self, checkbox_title="Selected Cells Only", filename_filter="*.txt"):
+        super().__init__(filter=filename_filter)
         self.setSupportedSchemes(["file"])
         self.setOption(QFileDialog.DontUseNativeDialog)
         self.setAcceptMode(QFileDialog.AcceptSave)
         self.setNameFilter("Feather file (*.feather);;CSV file (*.csv)")
         self.selectNameFilter("Feather file (*.feather);;CSV file (*.csv)")
-        self.chkBx = QCheckBox(chkBxTitle)
-        self.layout().addWidget(self.chkBx)
+        self.checkbox = QCheckBox(checkbox_title)
+        self.layout().addWidget(self.checkbox)
 
     @property
     def full_filename(self) -> Path:
@@ -64,8 +64,8 @@ class ChkBxFileDialog(QFileDialog):
         return full_filename
 
     @property
-    def selected_regions_only(self) -> bool:
-        return self.chkBx.isChecked()
+    def selected_cells_only(self) -> bool:
+        return self.checkbox.isChecked()
 
 
 class SaveCellsAction(QAction):
@@ -87,5 +87,5 @@ class SaveCellsAction(QAction):
         if dialog.exec_() == QDialog.Accepted:
             self.model.submit(
                 filename=dialog.full_filename,
-                selected_regions_only=dialog.selected_regions_only
+                export_visible_cells_only=dialog.selected_cells_only
             )

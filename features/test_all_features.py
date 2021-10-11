@@ -82,15 +82,15 @@ def step_impl(app: App, brain_region: int):
 
 
 @when(
-    parse("the user exports the data to {filename} with brain region filtering set to {is_brain_region_filter}"),
+    parse("the user exports the data to {filename} with export visible cells set to {export_visible_cells}"),
     converters={
         'filename': Path,
-        'is_brain_region_filter': lambda s: {'on': True, 'off': False},
+        'export_visible_cells': lambda s: {'on': True, 'off': False},
     }
 )
-def step_impl(app: App, tmp_path, filename: Path, is_brain_region_filter: bool):
+def step_impl(app: App, tmp_path, filename: Path, export_visible_cells: bool):
     full_filename = tmp_path / filename
-    app.export_data_button.submit(filename=full_filename, selected_regions_only=is_brain_region_filter)
+    app.export_data_button.submit(filename=full_filename, export_visible_cells_only=export_visible_cells)
 
 
 @then(
@@ -113,6 +113,13 @@ def step_impl(app: App, tmp_path, filename: Path):
     app.save_groovy_script_button.submit(tmp_path / filename)
 
 
+@given(
+    parse("the user sets the maximum {measurement} in the {channel_name} channel to {max_spots}"),
+    converters={
+        'max_spots': int,
+        'measurement': lambda s: {"number of spots": "Num Spots"}[s]
+    },
+)
 @when(
     parse("the user sets the maximum {measurement} in the {channel_name} channel to {max_spots}"),
     converters={
@@ -176,3 +183,16 @@ def step_impl(app: App, tmp_path: Path, directory: Path):
 )
 def step_impl(app: App, tmp_path: Path, directory: Path):
     assert (tmp_path / directory / "extensions").exists()
+
+
+@then(
+    parse(
+        "the {filename} file only contains cells that have {max_spots} or less spots from the {channel_name} channel"),
+    converters={
+        'filename': Path,
+        'max_spots': int,
+    },
+)
+def step_impl(tmp_path: Path, filename: Path, max_spots: int, channel_name: str):
+    df = pd.read_csv(tmp_path / filename)
+    assert df[f"{channel_name}: Num Spots"].max() <= max_spots

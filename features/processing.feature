@@ -22,7 +22,19 @@ Feature: Data Processing
 
   Scenario: Export Brain-Region Filtered Cells
     Given the user has only selected the Anterior hypothalamic nucleus brain region
-    When the user exports the data to example.csv with brain region filtering set to on
+    When the user exports the data to example.csv with export visible cells set to on
+    Then the example.csv file only contains cells from the Anterior hypothalamic nucleus brain region
+
+  Scenario: Export Receptor-Filtered Cells
+    Given the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 30
+    When the user exports the data to example.csv with export visible cells set to on
+    Then the example.csv file only contains cells that have 30 or less spots from the Esr1 (Opal 480) channel
+
+  Scenario: Export Brain-Region and Receptor-Filtered Cells
+    Given the user has only selected the Anterior hypothalamic nucleus brain region
+    And the user sets the maximum number of spots in the Esr1 (Opal 480) channel to 30
+    When the user exports the data to example.csv with export visible cells set to on
+    Then the example.csv file only contains cells that have 30 or less spots from the Esr1 (Opal 480) channel
     Then the example.csv file only contains cells from the Anterior hypothalamic nucleus brain region
 
   Scenario: Save Merged CSV
