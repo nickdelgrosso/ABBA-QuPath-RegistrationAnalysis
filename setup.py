@@ -21,7 +21,7 @@ regexport
 
 setup(
     name='ABBA-QuPath-RegistrationExporter',
-    version='0.3',
+    version='0.3.1',
     packages=find_packages(),
     url='',
     license='MIT',
