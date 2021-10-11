@@ -10,7 +10,7 @@ from regexport.views.labelled_slider import LabelledSliderView, LabelledSliderMo
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
 from regexport.views.region_tree import BrainRegionTree, BrainRegionTreeModel
-from regexport.views.sidebar import Sidebar
+from regexport.views.sidebar import Layout
 from regexport.views.text_selector import DropdownTextSelectorView, TextSelectorModel
 
 
@@ -39,7 +39,7 @@ def test_region_tree_renders_without_problems(qtbot):
 
 
 def test_sidebar_renders_without_problems(qtbot):
-    sidebar = Sidebar()
+    sidebar = Layout()
     qtbot.add_widget(sidebar.widget)
 
 

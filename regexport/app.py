@@ -12,7 +12,7 @@ from regexport.views.histogram import HistogramModel, HistogramView
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
 from regexport.views.region_tree import BrainRegionTreeModel, BrainRegionTree
-from regexport.views.sidebar import Sidebar
+from regexport.views.sidebar import Layout
 from regexport.views.text_selector import TextSelectorModel, DropdownTextSelectorView
 
 
@@ -46,6 +46,9 @@ class App:
         self.num_spots_histogram = HistogramModel()
         self.num_spots_histogram.register(model=self.model)
 
+        self.num_spots_histogram2 = HistogramModel(cumulative=True)
+        self.num_spots_histogram2.register(model=self.model)
+
         self.download_biop_extensions_button = SaveBiopExtensionsActionModel()
         self.save_groovy_script_button = SaveGroovyScriptActionModel()
 
@@ -58,13 +61,20 @@ class App:
             main_widgets=(
                 BrainRegionTree(model=self.brain_region_tree),
                 PlotterView(model=self.plot_window),
-                Sidebar(
+                Layout(
                     widgets=(
                         DropdownTextSelectorView(model=self.colordata_selector_dropdown),
                         DropdownTextSelectorView(model=self.colormap_selector_model),
-                        HistogramView(model=self.num_spots_histogram),
+                        Layout(
+                            widgets=(
+                                HistogramView(model=self.num_spots_histogram),
+                                HistogramView(model=self.num_spots_histogram2),
+                            ),
+                            horizontal=True,
+                        ),
                         ChannelFilterView(model=self.channel_filter_model),
-                    )
+                    ),
+                    horizontal=False,
                 ),
             ),
             menu_actions=(
