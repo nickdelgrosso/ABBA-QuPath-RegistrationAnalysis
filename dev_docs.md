@@ -40,3 +40,10 @@ python setup.py sdist
 ```
 twine upload dist/*
 ```
+
+### Convert Github Tag to Release
+
+  - In Github, Under "Releases", click "Tags", then the latest tag
+  - Click "Make Release" from the tag
+  - In the box, copy-past the relevant changelog notes
+  - Submit!
