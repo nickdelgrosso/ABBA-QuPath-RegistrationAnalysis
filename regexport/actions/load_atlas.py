@@ -1,8 +1,12 @@
+from functools import partial
+
+from PySide2.QtCore import QThreadPool
 from PySide2.QtWidgets import QAction
 from bg_atlasapi import BrainGlobeAtlas
 from traitlets import HasTraits, Unicode, Instance, directional_link
 
 from regexport.model import AppState
+from regexport.utils.parallel import Task
 
 
 class LoadAtlasActionModel(HasTraits):
@@ -13,8 +17,12 @@ class LoadAtlasActionModel(HasTraits):
         directional_link((self, "atlas"), target=(model, "atlas"))
 
     def click(self):
-        atlas = BrainGlobeAtlas("allen_mouse_25um")
-        self.atlas = atlas
+        self.atlas = self.load_brainglobe_atlas()
+
+    @staticmethod
+    def load_brainglobe_atlas() -> BrainGlobeAtlas:
+        # Static method used for multithreading
+        return BrainGlobeAtlas("allen_mouse_25um")
 
 
 class LoadAtlasAction(QAction):
@@ -23,6 +31,10 @@ class LoadAtlasAction(QAction):
         self.model = model
         super().__init__(*args, **kwargs)
         self.setText(self.model.text)
-        self.triggered.connect(self.model.click)
+        self.triggered.connect(self.click)
 
+    def click(self):
+        task = Task(self.model.load_brainglobe_atlas)
+        task.signals.finished.connect(partial(setattr, self.model, 'atlas'))
+        QThreadPool.globalInstance().start(task)
 

@@ -53,7 +53,7 @@ class App:
         self.channel_filter_model.register(model=self.model)
 
     def create_gui(self) -> QMainWindow:
-        # show_dialog_box_on_uncaught_exception()
+        show_dialog_box_on_uncaught_exception()
         return MainWindow(
             main_widgets=(
                 BrainRegionTree(model=self.brain_region_tree),

@@ -1,7 +1,10 @@
 from pathlib import Path
 from zipfile import ZipFile
 
+from PySide2.QtCore import QThreadPool
 from PySide2.QtWidgets import QFileDialog, QAction
+
+from regexport.utils.parallel import Task
 
 
 class SaveBiopExtensionsActionModel:
@@ -48,7 +51,6 @@ class SaveBiopExtensionsAction(QAction):
         if not directory:
             return
 
-        # worker = Task(self.model.download_extensions, Path(directory))
-        # pool = QThreadPool.globalInstance()
-        # pool.start(worker)
-        self.model.submit(Path(directory))
+        worker = Task(self.model.submit, Path(directory))
+        pool = QThreadPool.globalInstance()
+        pool.start(worker)
