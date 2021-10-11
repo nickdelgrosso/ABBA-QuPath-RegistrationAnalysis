@@ -25,7 +25,8 @@
 
   - Increment the version number in `setup.py`.  This project uses semantic versioning.
   - Create a Git Tag around the version number (helps with future changelog generation and GitHub Releases)
-    - git tag -a <version number> -m "v<version number>" 
+    - git tag -a <version number> -m "v<version number>"
+    - Push tags with "git push origin --tags"
 
 ### Build a new source distribution
 ```
