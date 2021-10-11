@@ -27,7 +27,7 @@ jobs:
         python-version: 3.9
     - name: Install dependencies
       run: |
-        pip install .[dev]
+        pip install .[dev,ci]
     - name: Test with pytest, tracking coverage
       env:
         QT_DEBUG_PLUGINS: 1

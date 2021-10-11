@@ -7,6 +7,8 @@
 A Python app and Groovy script that helps export transformed cell detections
 from ABBA-registered data stored in QuPath projects.
 
+![Example Screenshot](imgs/screenshot.jpg)
+
 ## Installation
 
    

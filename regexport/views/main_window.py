@@ -1,6 +1,8 @@
+from pathlib import Path
 from typing import Union, Tuple
 
-from PySide2.QtCore import Qt
+from PIL import ImageGrab
+from PySide2.QtCore import Qt, QThreadPool
 from PySide2.QtWidgets import QMainWindow, QWidget, QSplitter, QToolBar, QAction
 
 from .utils import HasWidget
@@ -23,3 +25,4 @@ class MainWindow(QMainWindow):
         for action in menu_actions:
             tool_bar.addAction(action)
         self.addToolBar(Qt.TopToolBarArea, tool_bar)
+

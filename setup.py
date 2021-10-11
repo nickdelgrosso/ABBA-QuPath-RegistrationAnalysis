@@ -34,7 +34,6 @@ setup(
         'numpy',
         'matplotlib',
         'pandas',
-        # 'qtpy~=1.11.0',
         'vtk~=9.0.3',
         'vedo~=2021.0.5',
         'PySide2',
@@ -44,14 +43,17 @@ setup(
         'pyarrow',
     ],
     extras_require={
-        'dev': [ # to include as dev, try pip install -e .[dev]
+        'dev': [
             'pytest_runner',
             'pytest',
             'pytest-bdd',
             'coverage',
             'pytest-qt',
-            'pytest-xvfb'
-            ],
+            'Pillow',
+        ],
+        'ci': [
+            'pytest-xvfb',
+        ],
     },
     entry_points={'console_scripts':[
         "regexport=regexport.main:main"
