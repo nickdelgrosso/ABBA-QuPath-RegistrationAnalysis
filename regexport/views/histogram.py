@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import numpy as np
 import vedo
-from traitlets import HasTraits, Instance
+from traitlets import HasTraits, Instance, Bool
 from vedo import Plotter, pyplot
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
@@ -28,6 +28,7 @@ class HistogramData:
 
 class HistogramModel(HasTraits):
     histogram = Instance(HistogramData, allow_none=True)
+    cumulative = Bool(default_value=False)
 
     def register(self, model: AppState):
         self.model = model
@@ -41,9 +42,10 @@ class HistogramModel(HasTraits):
             self.histogram = None
         else:
             heights, bin_edges = np.histogram(data_column.values, bins='auto', density=True)
+            bar_heights = heights.cumsum() / heights.sum() if self.cumulative else heights
             self.histogram = HistogramData(
                 bin_edges=bin_edges,
-                bar_heights=heights,
+                bar_heights=bar_heights,
                 colors=['olivedrab'] * len(heights),
                 x_labels=bin_edges[:-1].astype(int).astype(str).tolist(),
             )
