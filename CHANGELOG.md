@@ -1,3 +1,7 @@
+## 0.3.1 (2021-10-11)
+
+  - Bugfix: moved screenshot script to function
+
 
 ## 0.3 (2021-10-11)
 
