@@ -31,13 +31,13 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     install_requires=[
-        'numpy~=1.21.2',
-        'matplotlib~=3.4.3',
-        'pandas~=1.3.2',
-        'qtpy~=1.11.0',
+        'numpy',
+        'matplotlib',
+        'pandas',
+        # 'qtpy~=1.11.0',
         'vtk~=9.0.3',
         'vedo~=2021.0.5',
-        'PySide2',  #~=5.14',  # Pyside 5.15.2 is not working properly with CI
+        'PySide2',
         'treelib~=1.6.1',
         'traitlets~=5.1.0',
         'bg-atlasapi',
