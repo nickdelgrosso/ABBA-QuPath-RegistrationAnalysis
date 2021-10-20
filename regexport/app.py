@@ -46,20 +46,14 @@ class App:
         self.colordata_selector_dropdown.register(model=self.model, options_attr='column_to_plot_options',
                                                   selected_attr='column_to_plot')
 
-        self.num_spots_histogram = HistogramModel()
-        self.num_spots_histogram.register(model=self.model)
-
-        self.num_spots_histogram2 = HistogramModel(cumulative=True)
-        self.num_spots_histogram2.register(model=self.model)
-
         self.download_biop_extensions_button = SaveBiopExtensionsActionModel()
         self.save_groovy_script_button = SaveGroovyScriptActionModel()
 
         self.channel_filter_model = ChannelFilterModel()
         self.channel_filter_model.register(model=self.model)
 
-        self.plot = PlotModel()
-        self.plot.register(model=self.model)
+        self.hist_plots = PlotModel()
+        self.hist_plots.register(model=self.model)
 
         self.show_plots_checkbox = CheckboxModel(label='Auto-Update Histograms')
         self.show_plots_checkbox.register(model=self.model, model_property='show_plots')
@@ -76,7 +70,7 @@ class App:
                     widgets=(
                         DropdownTextSelectorView(model=self.colordata_selector_dropdown),
                         DropdownTextSelectorView(model=self.colormap_selector_model),
-                        PlotView(model=self.plot),
+                        PlotView(model=self.hist_plots),
                         CheckboxView(model=self.show_plots_checkbox),
                         ChannelFilterView(model=self.channel_filter_model),
                     ),

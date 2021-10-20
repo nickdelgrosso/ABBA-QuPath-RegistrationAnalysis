@@ -154,11 +154,9 @@ def step_impl(app: App, channel_name: str):
     converters={'range_min': int, 'range_max': int},
 )
 def step_impl(app: App, range_min: int, range_max: int):
-    hist = app.num_spots_histogram.histogram
-    assert hist is not None
-    assert max(hist.bin_edges) == range_max
-    assert min(hist.bin_edges) == range_min
-    assert len(hist.bar_heights) == len(hist.bin_edges) - 1
+    hist = app.hist_plots
+    assert max(hist.selected_data) == range_max
+    assert min(hist.selected_data) == range_min
 
 
 @then(
