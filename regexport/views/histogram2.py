@@ -2,7 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from PySide2.QtWidgets import QVBoxLayout, QWidget
-from traitlets import HasTraits, Instance
+from traitlets import HasTraits, Instance, Bool, directional_link
 
 from regexport.model import AppState
 from regexport.views.utils import HasWidget
@@ -19,10 +19,12 @@ from matplotlib.figure import Figure
 class PlotModel(HasTraits):
     selected_data = Instance(np.ndarray, allow_none=True)
     data = Instance(np.ndarray, allow_none=True)
+    show = Bool(default_value=True)
 
     def register(self, model: AppState):
         self.model = model
-        model.observe(self.update, ['cells', 'selected_cells', 'column_to_plot'])
+        model.observe(self.update, ['cells', 'selected_cells', 'column_to_plot', 'show_plots'])
+        directional_link((model, 'show_plots'), (self, 'show'))
 
     def update(self, change):
         model = self.model
@@ -55,34 +57,35 @@ class PlotView(HasWidget):
         self.model.observe(self.render)
 
     def render(self, change):
-        for ax in self.axes:
-            ax.cla()
-        if change.new is None:
-            return
-        else:
-            selected_data = self.model.selected_data
-            if selected_data is not None:
-                data = selected_data
-                _, edges = np.histogram(data[data > 0], bins='auto')
-                all_edges = np.concatenate([[0, 1], edges])
-                self.axes[0].hist(
+        if self.model.show:
+            for ax in self.axes:
+                ax.cla()
+            if change.new is None:
+                return
+            else:
+                selected_data = self.model.selected_data
+                if selected_data is not None:
+                    data = selected_data
+                    _, edges = np.histogram(data[data > 0], bins='auto')
+                    all_edges = np.concatenate([[0, 1], edges])
+                    self.axes[0].hist(
+                        data,
+                        bins=all_edges,
+                        cumulative=False,
+                        # density=True,
+                    )
+
+                data = self.model.data
+
+                ax: plt.Axes = self.axes[1]
+                ax.hist(
                     data,
-                    bins=all_edges,
-                    cumulative=False,
-                    # density=True,
+                    bins=50,
+                    cumulative=True,
+                    density=True,
                 )
-
-            data = self.model.data
-
-            ax: plt.Axes = self.axes[1]
-            ax.hist(
-                data,
-                bins=50,
-                cumulative=True,
-                density=True,
-            )
-            if selected_data is not None:
-                ax.vlines(selected_data.max(), 0, 1, colors='black', linestyles='dotted')
-            # self.axes[1].set_ylim(0, 1)
-        self.canvas.draw()
+                if selected_data is not None:
+                    ax.vlines(selected_data.max(), 0, 1, colors='black', linestyles='dotted')
+                # self.axes[1].set_ylim(0, 1)
+            self.canvas.draw()
 

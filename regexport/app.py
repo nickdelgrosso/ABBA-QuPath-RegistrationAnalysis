@@ -13,6 +13,7 @@ from regexport.views.histogram2 import PlotView, PlotModel
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
 from regexport.views.region_tree import BrainRegionTreeModel, BrainRegionTree
+from regexport.views.checkbox import CheckboxModel, CheckboxView
 from regexport.views.sidebar import Layout
 from regexport.views.text_selector import TextSelectorModel, DropdownTextSelectorView
 
@@ -60,6 +61,10 @@ class App:
         self.plot = PlotModel()
         self.plot.register(model=self.model)
 
+        self.show_plots_checkbox = CheckboxModel(label='Auto-Update Histograms')
+        self.show_plots_checkbox.register(model=self.model, model_property='show_plots')
+
+
     def create_gui(self) -> QMainWindow:
         if not self.debug:
             show_dialog_box_on_uncaught_exception()
@@ -71,14 +76,8 @@ class App:
                     widgets=(
                         DropdownTextSelectorView(model=self.colordata_selector_dropdown),
                         DropdownTextSelectorView(model=self.colormap_selector_model),
-                        Layout(
-                            widgets=(
-                                PlotView(model=self.plot),
-                                # HistogramView(model=self.num_spots_histogram),
-                                # HistogramView(model=self.num_spots_histogram2),
-                            ),
-                            horizontal=True,
-                        ),
+                        PlotView(model=self.plot),
+                        CheckboxView(model=self.show_plots_checkbox),
                         ChannelFilterView(model=self.channel_filter_model),
                     ),
                     horizontal=False,

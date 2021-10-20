@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from bg_atlasapi import BrainGlobeAtlas
 from matplotlib import pyplot as plt
-from traitlets import HasTraits, Instance, observe, Tuple, List, Unicode, Dict, Int
+from traitlets import HasTraits, Instance, observe, Tuple, List, Unicode, Dict, Int, Bool
 
 from regexport.utils.filters import is_parent
 
@@ -25,6 +25,7 @@ class AppState(HasTraits):
     selected_colormap = Unicode(default_value='tab20c')
     selected_cells = Instance(pd.DataFrame, allow_none=True)
     max_numspots_filters = Dict(key_trait=Unicode(), value_trait=Int(), default_value={})
+    show_plots = Bool(default_value=True)
 
     @observe('cells')
     def _update_max_numspots_filter_to_max_of_each_numspots_column(self, change):
