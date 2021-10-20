@@ -38,6 +38,9 @@ class LabelledSliderView(HasWidget):
         layout.addWidget(self.label)
 
         self.slider = QSlider()
+        self.slider.setMinimum(model.min)
+        self.slider.setMaximum(model.max)
+        self.slider.setValue(model.value)
         self.slider.setOrientation(Qt.Horizontal)
 
         layout.addWidget(self.slider)
