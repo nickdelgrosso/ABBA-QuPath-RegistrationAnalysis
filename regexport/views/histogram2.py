@@ -1,4 +1,5 @@
 import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 from PySide2.QtWidgets import QVBoxLayout, QWidget
 from traitlets import HasTraits, Instance
@@ -16,18 +17,20 @@ from matplotlib.figure import Figure
 
 
 class PlotModel(HasTraits):
+    selected_data = Instance(np.ndarray, allow_none=True)
     data = Instance(np.ndarray, allow_none=True)
 
     def register(self, model: AppState):
         self.model = model
-        model.observe(self.update, ['selected_cells', 'column_to_plot'])
+        model.observe(self.update, ['cells', 'selected_cells', 'column_to_plot'])
 
     def update(self, change):
         model = self.model
         if model.selected_cells is None or model.selected_cells[model.column_to_plot].dtype.name == 'category':
-            self.data = None
+            self.selected_data = None
         else:
-            self.data = model.selected_cells[model.column_to_plot].values
+            self.data = model.cells[model.column_to_plot].values
+            self.selected_data = model.selected_cells[model.column_to_plot].values
 
 
 class PlotView(HasWidget):
@@ -41,8 +44,7 @@ class PlotView(HasWidget):
         widget.setLayout(layout)
         HasWidget.__init__(self, widget=widget)
 
-        self.fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = self.fig.add_subplot(111)
+        self.fig, self.axes = plt.subplots(ncols=2, figsize=(width, height), dpi=dpi)
         self.canvas = FigureCanvasQTAgg(figure=self.fig)
         layout.addWidget(self.canvas)
 
@@ -53,66 +55,34 @@ class PlotView(HasWidget):
         self.model.observe(self.render)
 
     def render(self, change):
-        self.axes.cla()
+        for ax in self.axes:
+            ax.cla()
         if change.new is None:
-            pass
+            return
         else:
-            data = self.model.data
-            _, edges = np.histogram(data[data > 0], bins='auto')
+            selected_data = self.model.selected_data
+            if selected_data is not None:
+                data = selected_data
+                _, edges = np.histogram(data[data > 0], bins='auto')
+                all_edges = np.concatenate([[0, 1], edges])
+                self.axes[0].hist(
+                    data,
+                    bins=all_edges,
+                    cumulative=False,
+                    # density=True,
+                )
 
-            print(edges)
-            self.axes.hist(
+            data = self.model.data
+
+            ax: plt.Axes = self.axes[1]
+            ax.hist(
                 data,
-                bins=np.concatenate([[0, 1], edges]),
+                bins=50,
+                cumulative=True,
+                density=True,
             )
+            if selected_data is not None:
+                ax.vlines(selected_data.max(), 0, 1, colors='black', linestyles='dotted')
+            # self.axes[1].set_ylim(0, 1)
         self.canvas.draw()
 
-#
-# class MainWindow(QtWidgets.QMainWindow):
-#
-#     def __init__(self, *args, **kwargs):
-#         super(MainWindow, self).__init__(*args, **kwargs)
-#
-#         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
-#         self.setCentralWidget(self.canvas)
-#
-#         n_data = 50
-#         self.xdata = list(range(n_data))
-#         self.ydata = [random.randint(0, 10) for i in range(n_data)]
-#
-#         # We need to store a reference to the plotted line
-#         # somewhere, so we can apply the new data to it.
-#         self._plot_ref = None
-#         self.update_plot()
-#
-#         self.show()
-#
-#         # Setup a timer to trigger the redraw by calling update_plot.
-#         self.timer = QtCore.QTimer()
-#         self.timer.setInterval(16)
-#         self.timer.timeout.connect(self.update_plot)
-#         self.timer.start()
-#
-#     def update_plot(self):
-#         # Drop off the first y element, append a new one.
-#         self.ydata = self.ydata[1:] + [random.randint(0, 10)]
-#
-#         # Note: we no longer need to clear the axis.
-#         if self._plot_ref is None:
-#             # First time we have no plot reference, so do a normal plot.
-#             # .plot returns a list of line <reference>s, as we're
-#             # only getting one we can take the first element.
-#             plot_refs = self.canvas.axes.plot(self.xdata, self.ydata, 'r')
-#             self._plot_ref = plot_refs[0]
-#         else:
-#             # We have a reference, we can use it to update the data for that line.
-#             self._plot_ref.set_ydata(self.ydata)
-#
-#         # Trigger the canvas to update and redraw.
-#         self.canvas.draw()
-#
-#
-#
-# app = QtWidgets.QApplication(sys.argv)
-# w = MainWindow()
-# app.exec_()
