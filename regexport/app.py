@@ -9,6 +9,7 @@ from regexport.model import AppState
 from regexport.utils.exceptions import show_dialog_box_on_uncaught_exception
 from regexport.views.channel_filter import ChannelFilterView, ChannelFilterModel
 from regexport.views.histogram import HistogramModel, HistogramView
+from regexport.views.histogram2 import PlotView, PlotModel
 from regexport.views.main_window import MainWindow
 from regexport.views.plot_3d import PlotterModel, PlotterView
 from regexport.views.region_tree import BrainRegionTreeModel, BrainRegionTree
@@ -17,7 +18,8 @@ from regexport.views.text_selector import TextSelectorModel, DropdownTextSelecto
 
 
 class App:
-    def __init__(self):
+    def __init__(self, debug=False):
+        self.debug = debug
         self.model = AppState()
 
         self.plot_window = PlotterModel()
@@ -55,8 +57,12 @@ class App:
         self.channel_filter_model = ChannelFilterModel()
         self.channel_filter_model.register(model=self.model)
 
+        self.plot = PlotModel()
+        self.plot.register(model=self.model)
+
     def create_gui(self) -> QMainWindow:
-        show_dialog_box_on_uncaught_exception()
+        if not self.debug:
+            show_dialog_box_on_uncaught_exception()
         return MainWindow(
             main_widgets=(
                 BrainRegionTree(model=self.brain_region_tree),
@@ -67,8 +73,9 @@ class App:
                         DropdownTextSelectorView(model=self.colormap_selector_model),
                         Layout(
                             widgets=(
-                                HistogramView(model=self.num_spots_histogram),
-                                HistogramView(model=self.num_spots_histogram2),
+                                PlotView(model=self.plot),
+                                # HistogramView(model=self.num_spots_histogram),
+                                # HistogramView(model=self.num_spots_histogram2),
                             ),
                             horizontal=True,
                         ),

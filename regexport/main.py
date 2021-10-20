@@ -8,7 +8,7 @@ from regexport.app import App
 
 def main(debug=False):
     qapp = QApplication(sys.argv)
-    app = App()
+    app = App(debug=debug)
     win = app.create_gui()
     win.show()
     if debug:
