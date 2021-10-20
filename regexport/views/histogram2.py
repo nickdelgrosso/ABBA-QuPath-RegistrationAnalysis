@@ -7,8 +7,6 @@ from traitlets import HasTraits, Instance, Bool, directional_link
 from regexport.model import AppState
 from regexport.views.utils import HasWidget
 
-import seaborn as sns
-
 matplotlib.use('Qt5Agg')
 
 
