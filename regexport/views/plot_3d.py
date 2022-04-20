@@ -93,7 +93,8 @@ class PlotterView(HasWidget):
         # box = self._atlas_mesh.box().wireframe().alpha(0.2).color((255, 0, 0))
 
         # actors.append(box)
-        if len((points := self.model.points).coords) > 0:
+        points = self.model.points
+        if len(points.coords) > 0:
             coords = points.coords
             colors = (np.hstack((points.colors, points.alphas)) * 255).astype(int)  # alphas needed for fast rendering.
             actors.append(Points(coords, r=3, c=colors))

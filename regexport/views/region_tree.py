@@ -53,7 +53,8 @@ class BrainRegionTree(HasWidget):
             node.item.setText(0, node.data)
             node.item.setText(1, str(node.identifier))
 
-            if (parent := tree.parent(node.identifier)).is_root():
+            parent = tree.parent(node.identifier)
+            if parent.is_root():
                 self.treeview.addTopLevelItem(node.item)
             else:
                 parent.item.addChild(node.item)

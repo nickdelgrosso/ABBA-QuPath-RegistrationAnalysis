@@ -61,7 +61,8 @@ class ChannelFilterView(HasWidget):
             layout: QLayout = self.layout
 
             # Delete any existing sliders
-            if (num_sliders := layout.count()) > 0:
+            num_sliders = layout.count()
+            if num_sliders > 0:
                 for idx in reversed(range(num_sliders)):
                     item: QWidgetItem = layout.itemAt(idx)
                     layout.removeItem(item)

@@ -39,7 +39,10 @@ class HistogramModel(HasTraits):
         model = self.model
         if model.selected_cells is None:
             self.histogram = None
-        elif (data_column := model.selected_cells[model.column_to_plot]).dtype.name == 'category':
+            return
+        
+        data_column = model.selected_cells[model.column_to_plot]
+        if data_column.dtype.name == 'category':
             self.histogram = None
         else:
             data = data_column.values
